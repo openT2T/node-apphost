@@ -13,6 +13,46 @@ var RMDIR = function(f) {
   }
 };
 
+function createScript() {
+  var cpu = "";
+  if (args.hasOwnProperty('--dest-cpu')) {
+    cpu = args['--dest-cpu'];
+  } else if (args.hasOwnProperty('x86')) {
+    cpu = "--dest-cpu=x86";
+  } else if (args.hasOwnProperty('x64')) {
+    cpu = "--dest-cpu=x64";
+  } else if (args.hasOwnProperty('arm')) {
+    cpu = "--dest-cpu=arm";
+  } else if (args.hasOwnProperty('ia32')) {
+    cpu = "--dest-cpu=ia32";
+  }
+
+  if (!isWindows) {
+    return 'cd $1;./configure --enable-static ' + cpu + ';make -j ' + require('os').cpus().length;
+  } else {
+    return 'cd %1\nvcbuild.bat chakracore ' + cpu;
+  }
+}
+
+var createBatch = function() {
+  if (!fs.existsSync('temp')) {
+    fs.mkdirSync('./temp');
+
+    if (isWindows) {
+      fs.writeFileSync('./temp/stash.bat', 'cd %1\ngit stash\ngit stash clear');
+    } else {
+      fs.writeFileSync('./temp/stash.bat', 'cd $1;git stash;git stash clear');
+    }
+
+    fs.writeFileSync('./temp/compile.bat', createScript());
+
+    if (!isWindows) {
+      fs.chmodSync('./temp/stash.bat', '0755');
+      fs.chmodSync('./temp/compile.bat', '0755');
+    }
+  }
+}
+
 var CLONE = function(repo, target) {
   return "git clone https://github.com/" + repo + " " + target;
 };
@@ -30,7 +70,11 @@ var exec = function(cmd, callback) {
 };
 
 var STASH = function(repo) {
-  return "cd " + repo + ";git stash;git stash clear";
+  return path.join(__dirname, "temp/stash.bat") + " " + repo;
+};
+
+var COMPILE = function(repo) {
+  return path.join(__dirname, "temp/compile.bat") + " " + repo;
 };
 
 var tasker;
@@ -38,7 +82,7 @@ var setup = function() {
   tasker = [
     [RMDIR('nodejs'), "deleting nodejs folder"],
     [RMDIR('jxcore'), "deleting jxcore folder"],
-    [CLONE('nodejs/node', 'nodejs'), "cloning nodejs"],
+    [CLONE(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'), "cloning nodejs"],
     [CLONE('jxcore/jxcore', 'jxcore'), "cloning jxcore"]
   ];
 };
@@ -94,19 +138,16 @@ var patch_nodejs = function() {
     var fs_js = fs.readFileSync('./nodejs/lib/fs.js') + "";
     fs.writeFileSync('./nodejs/lib/fs.js', fs_js + "\n" + fs_patch);
   }
-}
+};
 
-function COMPILE_NODE() {
-  if (!isWindows) {
-    return 'cd ./nodejs;./configure --enable-static;make -j ' + require('os').cpus().length;
-  } else {
-    // !!!
-  }
-}
+var finalize = function() {
+  console.log('done.');
+};
 
 tasker.push(
   [patch_nodejs],
-  [COMPILE_NODE(), "building nodejs"]
+  [COMPILE('nodejs'), "building nodejs"],
+  [finalize]
 );
 
 var runTasks = function() {
@@ -129,4 +170,5 @@ var runTasks = function() {
   }
 };
 
+createBatch();
 runTasks();
