@@ -4,13 +4,14 @@ var path = require('path');
 var isWindows = process.platform === 'win32';
 var args = taskman.args;
 
-if (args.hasOwnProperty('--help')) {
+function print_help(exit_code) {
   var params = [
     {option: "--help", text: "display available options"},
     {option: "", text: ""}, // placeholder
     {option: "--cid_node=[commit-id]", text: "Checkout a particular commit from node/node-chakracore repo"},
     {option: "--cid_jxcore=[commit-id]", text: "Checkout a particular commit from jxcore repo"},
     {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
+    {option: "--ndk-path=[path]", text: "path to android ndk. This option is required for platform=android"},
     {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-arm)"},
     {option: "--release", text: "Build release binary. By default Debug"},
     {option: "--reset", text: "Clone nodejs and jxcore repos once again"},
@@ -21,30 +22,59 @@ if (args.hasOwnProperty('--help')) {
     var space = new Buffer(28 - param.option.length); space.fill(" ");
     console.log(param.option, space + ": ", param.text);
   }
-  process.exit();
+  process.exit(exit_code);
+}
+
+if (args.hasOwnProperty('--help')) {
+  print_help(0);
 } else {
   console.log('tip: try "--help" for other options');
 }
 
+var platform = args.hasOwnProperty('--platform') ? args['--platform'] : 'desktop';
 function createScript() {
   var cpu = "";
-  if (args.hasOwnProperty('--dest-cpu')) {
-    cpu = args['--dest-cpu'];
-  } else if (args.hasOwnProperty('x86')) {
-    cpu = "--dest-cpu=x86";
-  } else if (args.hasOwnProperty('x64')) {
-    cpu = "--dest-cpu=x64";
-  } else if (args.hasOwnProperty('arm')) {
-    cpu = "--dest-cpu=arm";
-  } else if (args.hasOwnProperty('ia32')) {
-    cpu = "--dest-cpu=ia32";
-  }
-
   var release = args.hasOwnProperty('--release');
   if (!isWindows) {
-    return 'cd $1;./configure --enable-static ' + (release ? ' ' : '--debug ') + cpu + ';make -j ' + require('os').cpus().length;
+    if (args.hasOwnProperty('--dest-cpu')) {
+      cpu = "--dest-cpu=" + args['--dest-cpu'];
+    }
+
+    if (platform == "ios" || platform == "android") {
+      var script = 'cd jxcore;';
+      if (platform == "android") {
+        if (!args.hasOwnProperty('--ndk-path')) {
+          console.error('forget "--ndk-path" ??\n');
+          print_help(1);
+        }
+
+        script += "build_scripts/android-configure.sh " + args["--ndk-path"] + "\n"
+              + "if [ $? != 0 ]; then\n"
+              + "  exit 1\n"
+              + "fi\n"
+              + "build_scripts/android_compile.sh " + args["--ndk-path"] + "\n"
+              + "if [ $? != 0 ]; then\n"
+              + "  exit 1\n"
+              + "fi\n";
+        return script;
+      } else { // ios
+        return "build_scripts/ios_compile.sh\n"
+                + "if [ $? != 0 ]; then\n"
+                + "  exit 1\n"
+                + "fi\n";
+      }
+    } else {
+      return 'cd nodejs;./configure --enable-static '
+            + (release ? ' ' : '--debug ') + cpu
+            + ';make -j ' + require('os').cpus().length;
+    }
   } else {
-    return 'cd %1\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
+    if (platform == "windows-arm") {
+      cpu = "arm";
+    } else if (args.hasOwnProperty('--dest-cpu')){
+      cpu = args['--dest-cpu'];
+    }
+    return 'cd nodejs\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
   }
 }
 
@@ -57,21 +87,21 @@ var compile = function(repo) {
 };
 
 var createBatch = function() {
-  if (!fs.existsSync('temp')) {
+  try {
     fs.mkdirSync('./temp');
+  } catch(e) { }
 
-    if (isWindows) {
-      fs.writeFileSync('./temp/stash.bat', 'cd %1\ngit stash\ngit stash clear');
-    } else {
-      fs.writeFileSync('./temp/stash.bat', 'cd $1;git stash;git stash clear');
-    }
+  if (isWindows) {
+    fs.writeFileSync('./temp/stash.bat', 'cd %1\ngit stash\ngit stash clear');
+  } else {
+    fs.writeFileSync('./temp/stash.bat', 'cd $1;git stash;git stash clear');
+  }
 
-    fs.writeFileSync('./temp/compile.bat', createScript());
+  fs.writeFileSync('./temp/compile.bat', createScript());
 
-    if (!isWindows) {
-      fs.chmodSync('./temp/stash.bat', '0755');
-      fs.chmodSync('./temp/compile.bat', '0755');
-    }
+  if (!isWindows) {
+    fs.chmodSync('./temp/stash.bat', '0755');
+    fs.chmodSync('./temp/compile.bat', '0755');
   }
 }
 
@@ -136,7 +166,7 @@ var finalize = function() {
 
 taskman.tasker.push(
   [patch_nodejs],
-  [compile('nodejs'), "building nodejs"],
+  [compile('nodejs'), "building for " + platform],
   [finalize]
 );
 

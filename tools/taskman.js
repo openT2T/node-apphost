@@ -26,6 +26,10 @@ exports.clone = function(repo, target) {
   return "git clone https://github.com/" + repo + " " + target;
 };
 
+exports.checkout = function(repo, id) {
+  return "cd " + repo + "\ngit checkout " + id;
+}
+
 exports.exec = function(cmd, callback) {
   return exec_(cmd, eopts, function(err, stdout, stderr) {
     if (err) {
