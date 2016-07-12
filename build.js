@@ -99,9 +99,16 @@ var createBatch = function() {
 
   fs.writeFileSync('./temp/compile.bat', createScript());
 
+  var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : "master";
+  var br_jxcore = args.hasOwnProperty('--cid_jxcore') ? args['--cid_jxcore'] : "master";
+  fs.writeFileSync('./temp/checkout_node.bat', taskman.checkout('nodejs', br_node));
+  fs.writeFileSync('./temp/checkout_jxcore.bat', taskman.checkout('jxcore', br_jxcore));
+
   if (!isWindows) {
     fs.chmodSync('./temp/stash.bat', '0755');
     fs.chmodSync('./temp/compile.bat', '0755');
+    fs.chmodSync('./temp/checkout_node.bat', '0755');
+    fs.chmodSync('./temp/checkout_jxcore.bat', '0755');
   }
 }
 
@@ -110,7 +117,9 @@ var setup = function() {
     [taskman.rmdir('nodejs'), "deleting nodejs folder"],
     [taskman.rmdir('jxcore'), "deleting jxcore folder"],
     [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'), "cloning nodejs"],
-    [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"]
+    [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"],
+    ['./temp/checkout_node.bat', "checkout nodejs branch"],
+    ['./temp/checkout_jxcore.bat', "checkout jxcore branch"]
   ];
 };
 
