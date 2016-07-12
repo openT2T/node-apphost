@@ -12,7 +12,7 @@ function build() {
     return "cd " + root_folder + "tests\necho Testing $$TARGET_TEST\n" 
                  + "make BUILD_TYPE=" + build_type 
                  + " TARGET_TEST=$$TARGET_TEST\nif [ $? == 0 ]; then\n./test.o\n"
-                 + "fi\nrm test.o\nif [ $? != 0 ]; then\nexit 1\nfi\n";
+                 + "fi\nOUT=0\nif [ $? != 0 ]; then\nOUT=1\nfi\nrm test.o\nexit $OUT";
   } else {
     return "IMPLEMENT ME";
   }
@@ -22,12 +22,17 @@ function build() {
 var tests = [
   "call-function",
   "create-array",
-  "create-object"
+  "create-object",
+  "new_value"
 ];
 
 var script = "";
-for(var i=0; i<tests.length; i++) {
-  script += build().replace(/\$\$TARGET_TEST/g, tests[i]) + "\n";
+if (!args.hasOwnProperty('--file')) { // test all
+  for(var i=0; i<tests.length; i++) {
+    script += build().replace(/\$\$TARGET_TEST/g, tests[i]) + "\n";
+  }
+} else {
+  script = build().replace(/\$\$TARGET_TEST/g, args['--file']) + "\n";
 }
 
 var test_script = path.join(root_folder, "temp/build_test.bat");
