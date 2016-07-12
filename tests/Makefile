@@ -1,8 +1,19 @@
-IDIR=../../
+IDIR=../patch/node/
 CC=g++
 CFLAGS=-stdlib=libstdc++ -lstdc++ -std=c++11 -I$(IDIR)
 
-LIBRARY_PATH=../../../../nodejs/out/Debug
+ifeq (Release, ${BUILD_TYPE})
+$(info TESTING RELEASE BUILD)
+else
+ifeq (Debug, ${BUILD_TYPE})
+$(info TESTING DEBUG BUILD)
+else
+$(info missing BUILD_TYPE=Debug/Release argument. Forcing DEBUG BUILD)
+BUILD_TYPE=Debug
+endif
+endif
+
+LIBRARY_PATH=../nodejs/out/$(BUILD_TYPE)
 
 LDIR=$(LIBRARY_PATH)/libnode.a $(LIBRARY_PATH)/libuv.a $(LIBRARY_PATH)/libcares.a \
 	$(LIBRARY_PATH)/libopenssl.a $(LIBRARY_PATH)/libzlib.a \
@@ -14,7 +25,7 @@ LDIR=$(LIBRARY_PATH)/libnode.a $(LIBRARY_PATH)/libuv.a $(LIBRARY_PATH)/libcares.
 LIBS=-framework CoreServices -lm -ldl -Wno-c++11-compat-deprecated-writable-strings -Wno-deprecated-declarations -Wno-unknown-warning-option -o test.o
 
 testmake:
-	$(CC) test.cpp $(CFLAGS) -Wl,-force_load,$(LDIR) $(LIBS) 
+	$(CC) $(TARGET_TEST)/test.cpp $(CFLAGS) -Wl,-force_load,$(LDIR) $(LIBS) 
 
 .PHONY: clean
 

@@ -1,4 +1,4 @@
-#include "tests/commons/common-posix.h"
+#include "../commons/common-posix.h"
 
 int main(int argc, char **args) {
   JS_DefineMainFile("console.log('>>>', process.execPath)");

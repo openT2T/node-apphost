@@ -1,17 +1,30 @@
-var exec_ = require('child_process').exec;
+var taskman = require('./tools/taskman');
 var fs = require('fs');
 var path = require('path');
-var eopts = {
-  encoding: 'utf8', timeout: 0,
-  maxBuffer: 1e8, killSignal: 'SIGTERM'
-};
-
 var isWindows = process.platform === 'win32';
-var RMDIR = function(f) {
-  if (fs.existsSync(f)) {
-    return (isWindows ? "RD /S /Q " : "rm -rf ") + path.resolve(f);
+var args = taskman.args;
+
+if (args.hasOwnProperty('--help')) {
+  var params = [
+    {option: "--help", text: "display available options"},
+    {option: "", text: ""}, // placeholder
+    {option: "--cid_node=[commit-id]", text: "Checkout a particular commit from node/node-chakracore repo"},
+    {option: "--cid_jxcore=[commit-id]", text: "Checkout a particular commit from jxcore repo"},
+    {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
+    {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-arm)"},
+    {option: "--release", text: "Build release binary. By default Debug"},
+    {option: "--reset", text: "Clone nodejs and jxcore repos once again"},
+    {option: "--test", text: "run tests after build"}
+  ];
+  for(var i in params) {
+    var param = params[i];
+    var space = new Buffer(28 - param.option.length); space.fill(" ");
+    console.log(param.option, space + ": ", param.text);
   }
-};
+  process.exit();
+} else {
+  console.log('tip: try "--help" for other options');
+}
 
 function createScript() {
   var cpu = "";
@@ -27,12 +40,21 @@ function createScript() {
     cpu = "--dest-cpu=ia32";
   }
 
+  var release = args.hasOwnProperty('--release');
   if (!isWindows) {
-    return 'cd $1;./configure --enable-static ' + cpu + ';make -j ' + require('os').cpus().length;
+    return 'cd $1;./configure --enable-static ' + (release ? ' ' : '--debug ') + cpu + ';make -j ' + require('os').cpus().length;
   } else {
-    return 'cd %1\nvcbuild.bat chakracore ' + cpu;
+    return 'cd %1\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
   }
 }
+
+var stash = function(repo) {
+  return path.join(__dirname, "temp/stash.bat") + " " + repo;
+};
+
+var compile = function(repo) {
+  return path.join(__dirname, "temp/compile.bat") + " " + repo;
+};
 
 var createBatch = function() {
   if (!fs.existsSync('temp')) {
@@ -53,54 +75,22 @@ var createBatch = function() {
   }
 }
 
-var CLONE = function(repo, target) {
-  return "git clone https://github.com/" + repo + " " + target;
-};
-
-var exec = function(cmd, callback) {
-  return exec_(cmd, eopts, function(err, stdout, stderr) {
-    if (err) {
-      console.error(err);
-      console.error("FAILED:", cmd);
-      process.exit(1);
-    } else {
-      callback(stdout);
-    }
-  });
-};
-
-var STASH = function(repo) {
-  return path.join(__dirname, "temp/stash.bat") + " " + repo;
-};
-
-var COMPILE = function(repo) {
-  return path.join(__dirname, "temp/compile.bat") + " " + repo;
-};
-
-var tasker;
 var setup = function() {
-  tasker = [
-    [RMDIR('nodejs'), "deleting nodejs folder"],
-    [RMDIR('jxcore'), "deleting jxcore folder"],
-    [CLONE(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'), "cloning nodejs"],
-    [CLONE('jxcore/jxcore', 'jxcore'), "cloning jxcore"]
+  taskman.tasker = [
+    [taskman.rmdir('nodejs'), "deleting nodejs folder"],
+    [taskman.rmdir('jxcore'), "deleting jxcore folder"],
+    [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'), "cloning nodejs"],
+    [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"]
   ];
 };
-
-var args = {};
-for(var i = 2; i < process.argv.length; i++) {
-  var arg = process.argv[i];
-  var a = arg.split('=');
-  args[a[0]] = a.length > 1 ? a[1] : 1;
-}
 
 if (args.hasOwnProperty('--reset') || !fs.existsSync(path.resolve('nodejs'))) {
   console.log("Setting Up! [ This will take some time.. ]");
   setup();
 } else {
-  tasker = [
-    [STASH('nodejs'), "resetting nodejs source codes"],
-    [STASH('jxcore'), "resetting jxcore source codes"]
+  taskman.tasker = [
+    [stash('nodejs'), "resetting nodejs source codes"],
+    [stash('jxcore'), "resetting jxcore source codes"]
   ];
 }
 
@@ -144,31 +134,11 @@ var finalize = function() {
   console.log('done.');
 };
 
-tasker.push(
+taskman.tasker.push(
   [patch_nodejs],
-  [COMPILE('nodejs'), "building nodejs"],
+  [compile('nodejs'), "building nodejs"],
   [finalize]
 );
 
-var runTasks = function() {
-  if (!tasker.length) return;
-
-  var task = tasker.shift();
-  if (task[0] && task[1]) {
-    console.log("Running [", task[1], "]");
-    task = task[0];
-    exec(task, function(callback){
-      if (tasker.length) {
-        runTasks();
-      }
-    });
-  } else {
-    if (task[0]) {
-      task[0]();
-    }
-    setTimeout(runTasks, 0);
-  }
-};
-
 createBatch();
-runTasks();
+taskman.runTasks();

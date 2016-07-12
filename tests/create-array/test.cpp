@@ -1,4 +1,4 @@
-#include "tests/commons/common-posix.h"
+#include "../commons/common-posix.h"
 
 void sampleMethod(JS_Value *params, int argc) {
   JS_Value obj;
