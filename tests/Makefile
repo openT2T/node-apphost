@@ -15,17 +15,25 @@ endif
 
 LIBRARY_PATH=../nodejs/out/$(BUILD_TYPE)
 
+ifeq (nodejs, ${TEST_BINARY})
+DEF=-DNODEJS
 LDIR=$(LIBRARY_PATH)/libnode.a $(LIBRARY_PATH)/libuv.a $(LIBRARY_PATH)/libcares.a \
 	$(LIBRARY_PATH)/libopenssl.a $(LIBRARY_PATH)/libzlib.a \
 	$(LIBRARY_PATH)/libhttp_parser.a $(LIBRARY_PATH)/libv8_inspector_stl.a $(LIBRARY_PATH)/libicudata.a \
 	$(LIBRARY_PATH)/libv8_libbase.a $(LIBRARY_PATH)/libicui18n.a $(LIBRARY_PATH)/libv8_libplatform.a \
 	$(LIBRARY_PATH)/libicustubdata.a $(LIBRARY_PATH)/libv8_nosnapshot.a $(LIBRARY_PATH)/libicuucx.a \
 	$(LIBRARY_PATH)/libv8_snapshot.a $(LIBRARY_PATH)/libv8_base.a
+else
+DEF=-DJXCORE -DJS_ENGINE_MOZJS -DJS_PUNBOX64
+LDIR=$(LIBRARY_PATH)/libcares.a  $(LIBRARY_PATH)/libjx.a $(LIBRARY_PATH)/libsqlite3.a \
+    $(LIBRARY_PATH)/libchrome_zlib.a $(LIBRARY_PATH)/libmozjs.a  $(LIBRARY_PATH)/bin/libuv.a \
+    $(LIBRARY_PATH)/libhttp_parser.a  $(LIBRARY_PATH)/libopenssl.a
+endif
 
 LIBS=-framework CoreServices -lm -ldl -Wno-c++11-compat-deprecated-writable-strings -Wno-deprecated-declarations -Wno-unknown-warning-option -o test.o
 
 testmake:
-	$(CC) $(TARGET_TEST)/test.cpp $(CFLAGS) -Wl,-force_load,$(LDIR) $(LIBS) 
+	$(CC) $(DEF) $(TARGET_TEST)/test.cpp $(CFLAGS) -Wl,-force_load,$(LDIR) $(LIBS)
 
 .PHONY: clean
 

@@ -8,11 +8,12 @@ void sampleMethod(JS_Value *params, int argc) {
   JS_SetDouble(params[argc], (double)1.2);
 }
 
-int main(int argc, char **args) {
-  JS_DefineMainFile("console.log('>>>', process.execPath)");
-  JS_StartEngine("/"); // defaults to main.js
+const char* contents = "console.log('>>>', process.execPath)";
 
+int main(int argc, char **args) {
+  JS_DefineMainFile(contents);
   JS_SetProcessNative("sampleMethod", sampleMethod);
+  JS_StartEngine("/"); // defaults to main.js
 
   while (JS_LoopOnce() != 0) usleep(1);
 
