@@ -241,6 +241,51 @@ JS_GetBoolean(JS_Value &value) {
   return ret;
 }
 
+JS_PERSISTENT_FUNCTION JSONstringify;
+char *JS_Stringify(node::Environment *env, JS_HANDLE_OBJECT obj,
+                   size_t *data_length) {
+  JS_ENTER_SCOPE_WITH(env->isolate());
+  JS_DEFINE_STATE_MARKER(env);
+
+  JS_LOCAL_STRING str_value;
+  if (!JS_IS_STRING(obj)) {
+    JS_HANDLE_VALUE args[] = {obj};
+
+    // Init
+    if (JS_IS_EMPTY((JSONstringify))) {
+      JS_LOCAL_FUNCTION _JSONstringify = JS_CAST_FUNCTION(
+          JS_COMPILE_AND_RUN(STD_TO_STRING(
+                                 "(function(obj) {\n"
+                                 "  try {\n"
+                                 "    if(typeof obj === 'function') {\n"
+                                 "      var b={};\n"
+                                 "      for (var o in obj) {\n"
+                                 "        if (!obj.hasOwnProperty(o))\n"
+                                 "          continue;\n"
+                                 "        b[o] = obj[o];\n"
+                                 "      }\n"
+                                 "      obj = b;\n"
+                                 "    }\n"
+                                 "    return JSON.stringify(obj);\n"
+                                 "  } catch (e) {\n"
+                                 "    return 'undefined';\n"
+                                 "  }\n"
+                                 "});"),
+                             STD_TO_STRING("binding:stringify")));
+      JS_NEW_PERSISTENT_FUNCTION(JSONstringify, _JSONstringify);
+    }
+
+    JS_LOCAL_FUNCTION fncl = JS_TYPE_TO_LOCAL_FUNCTION(JSONstringify);
+    JS_LOCAL_VALUE result = JS_METHOD_CALL(fncl, JS_GET_GLOBAL(), 1, args);
+    str_value = JS_VALUE_TO_STRING(result);
+  } else {
+    str_value = JS_VALUE_TO_STRING(obj);
+  }
+
+  *data_length = JS_GET_STRING_LENGTH(str_value);
+  return strdup(STRING_TO_STD(str_value));
+}
+
 NWRAP_EXTERN(char *)
 JS_GetString(JS_Value &value) {
   EMPTY_CHECK(0);
@@ -259,11 +304,12 @@ JS_GetString(JS_Value &value) {
       case RT_Error:
       case RT_Object: {
         JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
-        ret = strdup(STRING_TO_STD(obj));
+        size_t len = 0;
+        ret = JS_Stringify(env, obj, &len);
 
         bool get_message = false;
         JS_LOCAL_STRING str_msg;
-        if (strlen(ret) == 2 && ret[1] == '}') {
+        if (len == 2 && ret[1] == '}') {
           str_msg = STD_TO_STRING("message");
           if (JS_HAS_NAME(obj, str_msg)) {
             free(ret);
@@ -1128,6 +1174,18 @@ bool JS_IsChakra() {
 }
 
 void JS_StopEngine() {
+  node::Environment *env = node::__GetNodeEnvironment();
+  JS_DEFINE_STATE_MARKER(env);
+
+  {
+    ScopeWatch watcher(__contextORisolate);
+    RUN_IN_SCOPE({
+      if (!JS_IS_EMPTY((JSONstringify))) {
+        JS_CLEAR_PERSISTENT(JSONstringify);
+      }
+    });
+  }
+
   node::__Shutdown();
 
 #if defined(__IOS__) || defined(__ANDROID__) || defined(DEBUG)

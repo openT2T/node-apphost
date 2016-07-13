@@ -44,7 +44,9 @@ function build() {
          + "  OUT=$?\n"
          + "fi\n"
          + "rm -rf test.o\n"
+         + "if [ $OUT != 0 ]; then\n"
          + "exit $OUT\n"
+         + "fi\n";
   } else {
     return "IMPLEMENT ME";
   }
@@ -53,9 +55,14 @@ function build() {
 // todo: move me into a json file
 var tests = [
   "call-function",
+  "check-type",
   "create-array",
   "create-object",
-  "new_value"
+  "native-method",
+  "new_value",
+  "raise-unhandled",
+  "scope-test",
+  "stringify-object"
 ];
 
 var script = "";

@@ -1,13 +1,6 @@
 #include "../commons/common-posix.h"
 
-const char compare_base[10] = {'1', '4', 't', 't', 
-#ifdef JXCORE
-'{',
-#elif defined(NODEJS)
-'[',
-#else
-#error "???"
-#endif
+const char compare_base[10] = {'1', '4', 't', 't', '{',
                                'A', 'u', 'n', 'E', 'n'};
 
 void sampleMethod(JS_Value *results, int argc) {
