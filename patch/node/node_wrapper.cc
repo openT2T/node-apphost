@@ -1060,10 +1060,18 @@ int JS_LoopOnce() { return node::__Loop(true); }
 
 int JS_Loop() { return node::__Loop(false); }
 
+NODE_INIT_CALLBACK init_callback = nullptr;
 void DEFINE_NATIVES__() {
   for(int i=0; i < extension_id; i++) {
     JS_SetProcessNativeInternal(i, callbacks[i].name, callbacks[i].callback);
   }
+  if (init_callback != nullptr) {
+    init_callback();
+  }
+}
+
+void JS_DefineNodeOnInitCallback(NODE_INIT_CALLBACK cb) {
+  init_callback = cb;
 }
 
 char *copy_argv = NULL;
@@ -1089,7 +1097,6 @@ void JS_StartEngine(const char* home_folder) {
   }
   
   app_args[0] = copy_argv;
-
   node::__Start(2, app_args, DEFINE_NATIVES__);
 
   JS_LoopOnce();

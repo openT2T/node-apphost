@@ -201,6 +201,7 @@ NWRAP_EXTERN(void *)
 JS_UnwrapObject(JS_Value &object);
 
 typedef void (*JS_CALLBACK)(JS_Value *result, int argc);
+typedef void (*NODE_INIT_CALLBACK)(void);
 
 // Evaluates a JavaScript code on the fly.
 // Remarks:
@@ -222,6 +223,10 @@ JS_DefineMainFile(const char *data);
 // js code: require('test.js').x -> 4
 NWRAP_EXTERN(void)
 JS_DefineFile(const char *name, const char *script);
+
+// Callback will be called right before the main content execution
+NWRAP_EXTERN(void)
+JS_DefineNodeOnInitCallback(NODE_INIT_CALLBACK cb);
 
 // Starts node.js engine instance
 // !!Executes the main.js file
