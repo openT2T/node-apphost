@@ -13,6 +13,7 @@ function print_help(exit_code) {
     {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
     {option: "--ndk-path=[path]", text: "path to android ndk. This option is required for platform=android"},
     {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-arm)"},
+    {option: "--force-target=[jxcore or nodejs]", text: "Force target framework regardless from the platform"},
     {option: "--release", text: "Build release binary. By default Debug"},
     {option: "--reset", text: "Clone nodejs and jxcore repos once again"},
     {option: "--test", text: "run tests after build"}
@@ -32,6 +33,8 @@ if (args.hasOwnProperty('--help')) {
 }
 
 var platform = args.hasOwnProperty('--platform') ? args['--platform'] : 'desktop';
+var forced_target = args['--force-target'];
+
 function createScript() {
   var cpu = "";
   var release = args.hasOwnProperty('--release');
@@ -40,7 +43,7 @@ function createScript() {
       cpu = "--dest-cpu=" + args['--dest-cpu'];
     }
 
-    if (platform == "ios" || platform == "android") {
+    if (platform == "ios" || platform == "android" || forced_target == 'jxcore') {
       var script = 'cd jxcore;';
       if (platform == "android") {
         if (!args.hasOwnProperty('--ndk-path')) {
@@ -48,6 +51,7 @@ function createScript() {
           print_help(1);
         }
 
+        forced_target = 'jxcore';
         script += "build_scripts/android-configure.sh " + args["--ndk-path"] + "\n"
               + "if [ $? != 0 ]; then\n"
               + "  exit 1\n"
@@ -57,13 +61,20 @@ function createScript() {
               + "  exit 1\n"
               + "fi\n";
         return script;
-      } else { // ios
+      } else if (platform == "ios") { // ios
+        forced_target = 'jxcore';
         return "build_scripts/ios_compile.sh\n"
                 + "if [ $? != 0 ]; then\n"
                 + "  exit 1\n"
                 + "fi\n";
+      } else {
+        forced_target = 'jxcore';
+        return "cd jxcore\n./configure --engine-mozilla --static-library "
+                + (release ? ' ' : '--debug ') + cpu
+                + '\nmake';
       }
     } else {
+      forced_target = 'nodejs';
       return 'cd nodejs;./configure --enable-static '
             + (release ? ' ' : '--debug ') + cpu
             + ';make -j ' + require('os').cpus().length;
@@ -74,7 +85,18 @@ function createScript() {
     } else if (args.hasOwnProperty('--dest-cpu')){
       cpu = args['--dest-cpu'];
     }
-    return 'cd nodejs\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
+
+    if (platform == "windows-arm" && forced_target == 'jxcore') {
+      console.error("For Windows ARM, node-chakracore is the only supported option.");
+      exit(1);
+    }
+
+    if (forced_target == 'jxcore')
+      return 'cd jxcore\nvcbuild.bat --engine-mozilla ' + release ? 'release ' : 'debug ' + cpu;
+    else {
+      forced_target = 'nodejs';
+      return 'cd nodejs\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
+    }
   }
 }
 
@@ -169,13 +191,21 @@ var patch_nodejs = function() {
   }
 };
 
+var patch_jxcore = function() {
+  console.log("[ patching jx.gyp ]")
+  var node_gyp = fs.readFileSync('./jxcore/jx.gyp') + "";
+  node_gyp = node_gyp.replace("'sources': [\n", "'sources': [\n'../patch/jxcore/jxcore_wrapper.cc',\n");
+  fs.writeFileSync('./jxcore/jx.gyp', node_gyp);
+};
+
 var finalize = function() {
   console.log('done.');
 };
 
 taskman.tasker.push(
   [patch_nodejs],
-  [compile('nodejs'), "building for " + platform],
+  [patch_jxcore],
+  [compile(forced_target), "building for " + platform],
   [finalize]
 );
 

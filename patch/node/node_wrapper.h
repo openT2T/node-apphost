@@ -16,6 +16,7 @@
 extern "C" {
 #endif
 
+#ifndef JXCORE_WRAPPER
 enum _JSBaseType {
   RT_Int32 = 1,
   RT_Double = 2,
@@ -28,17 +29,24 @@ enum _JSBaseType {
   RT_Error = 9,
   RT_Function = 10
 };
-
 typedef enum _JSBaseType JS_ValueType;
+#else
+typedef enum _JXType _JSBaseType;
+typedef enum _JXType JS_ValueType;
+#endif
 
 struct _JSValue {
   // internal use only
   void *com_;
   bool persistent_;
+  bool was_stored_;
 
   void *data_;
   size_t size_;
   JS_ValueType type_;
+
+  _JSValue():com_(nullptr), persistent_(false), was_stored_(false),
+             data_(nullptr), size_(0) { }
 };
 
 typedef struct _JSValue JS_Value;
