@@ -34,10 +34,10 @@ if (args.hasOwnProperty('--help')) {
 
 var platform = args.hasOwnProperty('--platform') ? args['--platform'] : 'desktop';
 var forced_target = args['--force-target'];
+var release = args.hasOwnProperty('--release');
 
 function createScript() {
   var cpu = "";
-  var release = args.hasOwnProperty('--release');
   if (!isWindows) {
     if (args.hasOwnProperty('--dest-cpu')) {
       cpu = "--dest-cpu=" + args['--dest-cpu'];
@@ -91,12 +91,17 @@ function createScript() {
       exit(1);
     }
 
+    var batch = "";
     if (forced_target == 'jxcore')
-      return 'cd jxcore\nvcbuild.bat --engine-mozilla ' + release ? 'release ' : 'debug ' + cpu;
+      batch += 'cd jxcore\nvcbuild.bat ia32 --shared-library '
+             + (release ? 'release ' : 'debug ') + cpu + '\n';
     else {
       forced_target = 'nodejs';
-      return 'cd nodejs\nvcbuild.bat chakracore ' + release ? 'release ' : 'debug ' + cpu;
+      batch += 'cd nodejs\nvcbuild.bat chakracore nosign '
+             + (release ? 'release ' : 'debug ') + cpu + '\n';
     }
+
+    return batch;
   }
 }
 
@@ -113,13 +118,22 @@ var createBatch = function() {
     fs.mkdirSync('./temp');
   } catch(e) { }
 
+  // this needs to be called first
+  fs.writeFileSync('./temp/compile.bat', createScript());
+
   if (isWindows) {
     fs.writeFileSync('./temp/stash.bat', 'cd %1\ngit stash\ngit stash clear');
+    fs.writeFileSync('./temp/copy.bat',  ('del winproj\\test_app\\*.lib \n'
+                                       + 'del winproj\\test_app\\*.dll \n'
+                                       + 'del winproj\\test_app\\*.exe \n'
+                                       + 'copy $$TARGET\\$$MODE\\*.lib winproj\\test_app\\ \n'
+                                       + 'copy $$TARGET\\$$MODE\\*.dll winproj\\test_app\\ \n'
+                                       + 'copy $$TARGET\\$$MODE\\*.exe winproj\\test_app\\ \n')
+                                       .replace(/\$\$MODE/g, release ? "Release" : "Debug")
+                                       .replace(/\$\$TARGET/g, forced_target));
   } else {
     fs.writeFileSync('./temp/stash.bat', 'cd $1;git stash;git stash clear');
   }
-
-  fs.writeFileSync('./temp/compile.bat', createScript());
 
   var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : "master";
   var br_jxcore = args.hasOwnProperty('--cid_jxcore') ? args['--cid_jxcore'] : "master";
@@ -138,7 +152,8 @@ var setup = function() {
   taskman.tasker = [
     [taskman.rmdir('nodejs'), "deleting nodejs folder"],
     [taskman.rmdir('jxcore'), "deleting jxcore folder"],
-    [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'), "cloning nodejs"],
+    [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'),
+                                "cloning nodejs"],
     [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"],
     ['./temp/checkout_node.bat', "checkout nodejs branch"],
     ['./temp/checkout_jxcore.bat', "checkout jxcore branch"]
@@ -158,7 +173,8 @@ if (args.hasOwnProperty('--reset') || !fs.existsSync(path.resolve('nodejs'))) {
 var patch_nodejs = function() {
   console.log("[ patching node.gyp ]")
   var node_gyp = fs.readFileSync('./nodejs/node.gyp') + "";
-  node_gyp = node_gyp.replace("'sources': [\n", "'sources': [\n'../patch/node/node_vfile.cc',\n'../patch/node/node_wrapper.cc',\n");
+  node_gyp = node_gyp.replace("'sources': [\n",
+    "'sources': [\n'../patch/node/node_vfile.cc',\n'../patch/node/node_wrapper.cc',\n");
   fs.writeFileSync('./nodejs/node.gyp', node_gyp);
 
   console.log("nodejs -> [ patching node.cc ]");
@@ -170,7 +186,8 @@ var patch_nodejs = function() {
       if (ch == '}') { // find namespace closing
         var left = nodejs_cc.substr(0, n);
         var right = nodejs_cc.substr(n);
-        fs.writeFileSync('./nodejs/src/node.cc', left + '\n#include "../../patch/node/node_internal_wrapper.cc"\n' + right);
+        fs.writeFileSync('./nodejs/src/node.cc', left
+              + '\n#include "../../patch/node/node_internal_wrapper.cc"\n' + right);
         break;
       }
     }
@@ -206,6 +223,7 @@ taskman.tasker.push(
   [patch_nodejs],
   [patch_jxcore],
   [compile(forced_target), "building for " + platform],
+  [isWindows ? "temp\\copy.bat" : null, "copying Windows binaries"],
   [finalize]
 );
 

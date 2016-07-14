@@ -2,3 +2,13 @@ nodejs/
 /jxcore/
 test.o
 temp/
+*.db
+*.opendb
+bin/
+obj/
+x64/
+x86/
+*.filters
+Debug/
+Release/
+.vs/

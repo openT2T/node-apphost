@@ -3,14 +3,19 @@
 #ifndef COMMON_POSIX_H_
 #define COMMON_POSIX_H_
 
+#ifndef _WIN32
+#include <unistd.h>
+#include <pthread.h>
+#include "node_wrapper.h"
+#else
+#include <Windows.h>
+#define usleep Sleep
+#include "../../patch/node/node_wrapper.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <sstream>
-#include <unistd.h>
-#include <pthread.h>
 #include <assert.h>
-#include "node_wrapper.h"
-
 
 #define flush_console(...)        \
   do {                            \
