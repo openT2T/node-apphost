@@ -2,6 +2,7 @@
 #define JXCORE_WRAPPER
 #include "../node/node_wrapper.h"
 #include <stdlib.h>
+#include <map>
 #include <string>
 
 NWRAP_EXTERN(bool)
@@ -218,8 +219,19 @@ JS_UnwrapObject(JS_Value &object) {
   return JX_UnwrapObject((JXValue*)&object);
 }
 
+static bool initialized = false;
+char *main_file = nullptr;
+std::map<std::string, char*> define_files;
+typedef std::map<std::string, char*>::iterator files_iterator;
+std::map<std::string, JX_CALLBACK> define_extentions;
+typedef std::map<std::string, JX_CALLBACK>::iterator ext_iterator;
+
 void JS_SetProcessNative(const char *name, JS_CALLBACK callback) {
-  JX_DefineExtension(name, (JX_CALLBACK)callback);
+  if (initialized) {
+    JX_DefineExtension(name, (JX_CALLBACK)callback);
+  } else {
+    define_extentions[name] = (JX_CALLBACK)callback;
+  }
 }
 
 void JS_SetNativeMethod(JS_Value &value, const char *name,
@@ -232,11 +244,15 @@ bool JS_Evaluate(const char *data, const char *script_name, JS_Value &jxresult) 
 }
 
 void JS_DefineMainFile(const char *data) {
-  JX_DefineMainFile(data);
+  main_file = strdup(data);
 }
 
 void JS_DefineFile(const char *name, const char *file) {
-  JX_DefineFile(name, file);
+  if (initialized) {
+    JX_DefineFile(name, file);
+  } else {
+    define_files[name] = strdup(file);
+  }
 }
 
 void callback(JXValue *results, int argc) {
@@ -251,6 +267,7 @@ void JS_DefineNodeOnInitCallback(NODE_INIT_CALLBACK cb) {
 
 char *path_copy;
 void JS_StartEngine(const char* path) {
+  initialized = true;
   const size_t len = strlen(path);
   path_copy = (char*) malloc(sizeof(char) * (len + 4));
   memcpy(path_copy, path, len);
@@ -264,7 +281,21 @@ void JS_StartEngine(const char* path) {
 
   JX_Initialize(path_copy, callback);
   JX_InitializeNewEngine();
-  
+
+  JX_DefineMainFile(main_file);
+  free(main_file);
+
+  for(files_iterator it = define_files.begin(); it != define_files.end(); ++it) {
+    JX_DefineFile(it->first.c_str(), it->second);
+    free(it->second);
+  }
+  define_files.clear();
+
+  for(ext_iterator it = define_extentions.begin(); it != define_extentions.end(); ++it) {
+    JX_DefineExtension(it->first.c_str(), it->second);
+  }
+  define_extentions.clear();
+
   if (init_callback != nullptr) {
     init_callback();
   }
