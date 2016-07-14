@@ -37,7 +37,9 @@ function build() {
   if (!isWindows) {
     return "cd " + root_folder + "tests\n"
          + "echo Testing $$TARGET_TEST\n"
-         + "make BUILD_TYPE=" + build_type + " TARGET_TEST=$$TARGET_TEST TEST_BINARY=$$TEST_BINARY\n"
+         + "make BUILD_TYPE=" + build_type
+         + " TARGET_TEST=$$TARGET_TEST TEST_BINARY=$$TEST_BINARY "
+         + "PLATFORM=" + process.platform + "\n"
          + "OUT=$?\n"
          + "if [ $OUT == 0 ]; then\n"
          + "  ./test.o\n"
