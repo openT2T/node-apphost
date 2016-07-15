@@ -1,4 +1,10 @@
+#ifdef _WIN32
+#include <Windows.h>
+#include "Header.h"
+#define usleep Sleep
+#else
 #include "../commons/common-posix.h"
+#endif
 
 const char compare_base[10] = {'1', '4', 't', 't', '{',
                                'A', 'u', 'n', 'E', 'n'};

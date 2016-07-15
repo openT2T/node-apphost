@@ -105,11 +105,6 @@ class NodeWrapVFile {
   JS_METHOD_END
 
   static void Init(Environment* env, Local<Object> target) {
-    // Local<FunctionTemplate> function_template =
-    //     FunctionTemplate::New(env->isolate());
-    // function_template->InstanceTemplate()->SetInternalFieldCount(1);
-    // env->set_script_data_constructor_function(function_template->GetFunction());
-
     env->SetMethod(target, "getFileData", GetFileData);
   }
 };

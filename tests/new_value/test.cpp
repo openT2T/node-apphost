@@ -1,4 +1,10 @@
+#ifdef _WIN32
+#include <Windows.h>
+#include "Header.h"
+#define usleep Sleep
+#else
 #include "../commons/common-posix.h"
+#endif
 
 JS_Value fnc;
 JS_Value param;

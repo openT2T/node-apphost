@@ -1,4 +1,10 @@
+#ifdef _WIN32
+#include <Windows.h>
+#include "Header.h"
+#define usleep Sleep
+#else
 #include "../commons/common-posix.h"
+#endif
 
 int main(int argc, char **args) {
   JS_DefineMainFile("console.log('>>>', process.execPath)");

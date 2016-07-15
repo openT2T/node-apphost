@@ -167,3 +167,6 @@ int __Shutdown() {
 
   return exit_code;
 }
+
+#ifdef _WIN32
+#endif

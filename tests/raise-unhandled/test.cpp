@@ -1,5 +1,10 @@
+#ifdef _WIN32
+#include <Windows.h>
+#include "Header.h"
+#define usleep Sleep
+#else
 #include "../commons/common-posix.h"
-
+#endif
 
 void sampleMethod(JS_Value *params, int argc) {
   // returns JS return value(5) back to the caller
