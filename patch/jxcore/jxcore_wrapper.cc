@@ -255,8 +255,6 @@ void JS_DefineFile(const char *name, const char *file) {
   }
 }
 
-void callback(JXValue *results, int argc) { // do nothing }
-
 NODE_INIT_CALLBACK init_callback = nullptr;
 
 void JS_DefineNodeOnInitCallback(NODE_INIT_CALLBACK cb) {
@@ -277,7 +275,7 @@ void JS_StartEngine(const char* path) {
     path_copy[len + 3] = char(0);
   }
 
-  JX_Initialize(path_copy, callback);
+  JX_Initialize(path_copy, nullptr);
   JX_InitializeNewEngine();
 
   JX_DefineMainFile(main_file);

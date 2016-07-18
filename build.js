@@ -44,7 +44,7 @@ function createScript() {
     }
 
     if (platform == "ios" || platform == "android" || forced_target == 'jxcore') {
-      var script = 'cd jxcore;';
+      var script = 'cd jxcore\n';
       if (platform == "android") {
         if (!args.hasOwnProperty('--ndk-path')) {
           console.error('forget "--ndk-path" ??\n');
@@ -63,10 +63,11 @@ function createScript() {
         return script;
       } else if (platform == "ios") { // ios
         forced_target = 'jxcore';
-        return "build_scripts/ios_compile.sh\n"
+        script += "build_scripts/ios_compile.sh\n"
                 + "if [ $? != 0 ]; then\n"
                 + "  exit 1\n"
                 + "fi\n";
+        return script;
       } else {
         forced_target = 'jxcore';
         return "cd jxcore\n./configure --engine-mozilla --static-library "
