@@ -85,6 +85,8 @@ function createScript() {
       cpu = "arm";
     } else if (args.hasOwnProperty('--dest-cpu')){
       cpu = args['--dest-cpu'];
+    } else {
+      cpu = 'ia32';
     }
 
     if (platform == "windows-arm" && forced_target == 'jxcore') {
@@ -94,20 +96,23 @@ function createScript() {
 
     var batch = "";
     if (forced_target == 'jxcore')
-      batch += 'cd jxcore\nvcbuild.bat ia32 --shared-library '
-             + (release ? 'release ' : 'debug ') + cpu + '\n';
+      batch += 'cd jxcore\nvcbuild.bat ia32 --shared-library ';
     else {
       forced_target = 'nodejs';
-      batch += 'cd nodejs\nvcbuild.bat chakracore nosign '
-             + (release ? 'release ' : 'debug ') + cpu + '\n';
+      batch += 'cd nodejs\nvcbuild.bat chakracore nosign ' + cpu + ' ';
     }
+
+    batch += (release ? 'release ' : 'debug ') + '\n'
+          + 'set EXIT_CODE=%errorlevel%\n'
+          + 'cd ..\n'
+          + 'exit /b %EXIT_CODE%\n';
 
     return batch;
   }
 }
 
 var stash = function(repo) {
-  return path.join(__dirname, "temp/stash.bat") + " " + repo;
+  return path.join(__dirname, "temp/clean.bat") + " " + repo;
 };
 
 var compile = function(repo) {
@@ -123,7 +128,7 @@ var createBatch = function() {
   fs.writeFileSync('./temp/compile.bat', createScript());
 
   if (isWindows) {
-    fs.writeFileSync('./temp/stash.bat', 'cd %1\ngit stash\ngit stash clear');
+    fs.writeFileSync('./temp/clean.bat', 'cd %1\ngit checkout -f');
     fs.writeFileSync('./temp/copy.bat',  ('del winproj\\test_app\\*.lib \n'
                                        + 'del winproj\\test_app\\*.dll \n'
                                        + 'del winproj\\test_app\\*.exe \n'
@@ -133,7 +138,7 @@ var createBatch = function() {
                                        .replace(/\$\$MODE/g, release ? "Release" : "Debug")
                                        .replace(/\$\$TARGET/g, forced_target));
   } else {
-    fs.writeFileSync('./temp/stash.bat', 'cd $1;git stash;git stash clear');
+    fs.writeFileSync('./temp/clean.bat', 'cd $1;git checkout -f');
   }
 
   var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : "master";
@@ -142,7 +147,7 @@ var createBatch = function() {
   fs.writeFileSync('./temp/checkout_jxcore.bat', taskman.checkout('jxcore', br_jxcore));
 
   if (!isWindows) {
-    fs.chmodSync('./temp/stash.bat', '0755');
+    fs.chmodSync('./temp/clean.bat', '0755');
     fs.chmodSync('./temp/compile.bat', '0755');
     fs.chmodSync('./temp/checkout_node.bat', '0755');
     fs.chmodSync('./temp/checkout_jxcore.bat', '0755');
@@ -156,8 +161,8 @@ var setup = function() {
     [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'),
                                 "cloning nodejs"],
     [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"],
-    ['./temp/checkout_node.bat', "checkout nodejs branch"],
-    ['./temp/checkout_jxcore.bat', "checkout jxcore branch"]
+    [path.join(__dirname, 'temp/checkout_node.bat'), "checkout nodejs branch"],
+    [path.join(__dirname, 'temp/checkout_jxcore.bat'), "checkout jxcore branch"]
   ];
 };
 
@@ -166,17 +171,53 @@ if (args.hasOwnProperty('--reset') || !fs.existsSync(path.resolve('nodejs'))) {
   setup();
 } else {
   taskman.tasker = [
-    [stash('nodejs'), "resetting nodejs source codes"],
-    [stash('jxcore'), "resetting jxcore source codes"]
+    [stash('nodejs'), "resetting nodejs folder"],
+    [stash('jxcore'), "resetting jxcore folder"]
   ];
 }
 
 var patch_nodejs = function() {
-  console.log("[ patching node.gyp ]")
-  var node_gyp = fs.readFileSync('./nodejs/node.gyp') + "";
-  node_gyp = node_gyp.replace("'sources': [\n",
-    "'sources': [\n'../patch/node/node_vfile.cc',\n'../patch/node/node_wrapper.cc',\n");
-  fs.writeFileSync('./nodejs/node.gyp', node_gyp);
+  console.log("[ patching node.gyp ]");
+  {
+    var node_gyp = fs.readFileSync('./nodejs/node.gyp') + "";
+
+    var len_gyp = node_gyp.length;
+    // add patch source files
+    // todo: make this regex
+    node_gyp = node_gyp.replace("'sources': [",
+      "'sources': [\n'../patch/node/node_vfile.cc',\n'../patch/node/node_wrapper.cc',\n");
+
+    if (node_gyp.length == len_gyp) {
+      console.error('FATAL ERROR: could not patch node.gyp with cc files');
+      process.exit(1);
+    }
+    node_gyp = node_gyp.replace(/shared_library/g, 'loadable_module');
+    len_gyp = node_gyp.length;
+
+    // todo: make this regex
+    node_gyp = node_gyp.replace("[ 'node_shared==\"false\"', {",
+        "['node_shared==\"true\"',{'msvs_settings':"
+      + "{'VCCLCompilerTool':{'RuntimeLibrary': 3}}}],\n"
+      + "[ 'node_shared==\"false\"', {");
+
+    if (node_gyp.length == len_gyp) {
+      console.error('FATAL ERROR: could not patch node.gyp with MSVS settings');
+      process.exit(1);
+    }
+    len_gyp = node_gyp.length;
+
+    node_gyp = node_gyp.replace(/node_module_version!=\"\"/g,
+                'node_module_version!="" and OS!="win"');
+
+    fs.writeFileSync('./nodejs/node.gyp', node_gyp);
+  }
+
+  console.log("nodejs -> [ patching configure ]");
+  {
+    var node_configure = fs.readFileSync('./nodejs/configure') + "";
+    fs.writeFileSync('./nodejs/configure',
+        node_configure.replace('b(options.shared)',"'true'"));
+  }
 
   console.log("nodejs -> [ patching node.cc ]");
   {
@@ -220,13 +261,15 @@ var finalize = function() {
   console.log('done.');
 };
 
+var compiled_script_path = compile(forced_target);
+createBatch();
+
 taskman.tasker.push(
   [patch_nodejs],
   [patch_jxcore],
-  [compile(forced_target), "building for " + platform],
+  [compiled_script_path, "building for " + forced_target + "@" + platform],
   [isWindows ? "temp\\copy.bat" : null, "copying Windows binaries"],
   [finalize]
 );
 
-createBatch();
 taskman.runTasks();

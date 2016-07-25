@@ -12,3 +12,6 @@ x86/
 Debug/
 Release/
 .vs/
+*.lib
+*.dll
+*.exe
