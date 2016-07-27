@@ -31,6 +31,14 @@ if (args.hasOwnProperty('--help')) {
     print_help(1);
   }
   console.log('tip: try "--help" for other options');
+
+  if (isWindows) {
+    // set target on vcxproj file
+    var proj_file = path.join(__dirname, "../winproj/test_app/test_app.vcxproj");
+    var file = fs.readFileSync(proj_file) + "";
+    file = file.replace("$NODE_DISTRO$", (args['--target'] == 'jxcore' ? 'jx' : 'node'));
+    fs.writeFileSync(path.join(path.dirname(proj_file), "current.vcxproj"), file);
+  }
 }
 
 function build() {
@@ -50,7 +58,18 @@ function build() {
          + "exit $OUT\n"
          + "fi\n";
   } else {
-    return "IMPLEMENT ME";
+    return "cd " + root_folder + "\\winproj\\test_app\n"
+         + "copy ..\\..\\tests\\$$TARGET_TEST\\test.cpp .\n"
+         + "msbuild /m /nologo current.sln\n"
+         + "if %errorlevel% NEQ 0 exit 1\n"
+         + "copy " + (args['--target'] == 'jxcore' ? 'jx' : 'node')
+         + ".dll Debug\\\n"
+         + "cd Debug\n"
+         + "echo *********** RUNNING $$TARGET_TEST *************"
+         + "\ncurrent.exe"
+         + "\nif %errorlevel% NEQ 0 ("
+         + "\nexit 1"
+         + "\n)\n";
   }
 }
 
@@ -67,13 +86,56 @@ var tests = [
   "stringify-object"
 ];
 
-var script = "";
+// find visual studio environment batch file and execute
+// this is needed for msbuild
+var script = 
+      "@echo off"
+    + "\nset target_env=vc2015"
+    + "\n@rem Set environment for msbuild"
+    + "\nif defined target_env if \"%target_env%\" NEQ \"vc2015\" goto vc-set-2013"
+    + "\n@rem Look for Visual Studio 2015"
+    + "\necho Looking for Visual Studio 2015"
+    + "\nif not defined VS140COMNTOOLS goto vc-set-2013"
+    + "\nif not exist \"%VS140COMNTOOLS%\\..\\..\\vc\\vcvarsall.bat\" goto vc-set-2013"
+    + "\necho Found Visual Studio 2015"
+    + "\nif \"%VCVARS_VER%\" NEQ \"140\" ("
+    + "\n  call \"%VS140COMNTOOLS%\\..\\..\\vc\\vcvarsall.bat\""
+    + "\n  SET VCVARS_VER=140"
+    + "\n)"
+    + "\nif not defined VCINSTALLDIR goto vc-set-2013"
+    + "\nset GYP_MSVS_VERSION=2015"
+    + "\nset PLATFORM_TOOLSET=v140"
+    + "\ngoto msbuild-found"
+    + "\n"
+    + "\n:vc-set-2013"
+    + "\nif defined target_env if \"%target_env%\" NEQ \"vc2013\" goto msbuild-not-found"
+    + "\n@rem Look for Visual Studio 2013"
+    + "\necho Looking for Visual Studio 2013"
+    + "\nif not defined VS120COMNTOOLS goto msbuild-not-found"
+    + "\nif not exist \"%VS120COMNTOOLS%\\..\\..\\vc\\vcvarsall.bat\" goto msbuild-not-found"
+    + "\necho Found Visual Studio 2013"
+    + "\nif \"%VCVARS_VER%\" NEQ \"120\" ("
+    + "\n  call \"%VS120COMNTOOLS%\\..\\..\\vc\\vcvarsall.bat\""
+    + "\n  SET VCVARS_VER=120"
+    + "\n)"
+    + "\nif not defined VCINSTALLDIR goto msbuild-not-found"
+    + "\nset GYP_MSVS_VERSION=2013"
+    + "\nset PLATFORM_TOOLSET=v120"
+    + "\ngoto msbuild-found"
+    + "\n"
+    + "\n:msbuild-not-found"
+    + "\necho Failed to find Visual Studio installation."
+    + "\nexit 1"
+    + "\n"
+    + "\n:msbuild-found"
+    + "\n";
+
 if (!args.hasOwnProperty('--file')) { // test all
   for(var i=0; i<tests.length; i++) {
     script += build().replace(/\$\$TARGET_TEST/g, tests[i]) + "\n";
   }
-} else {
-  script = build().replace(/\$\$TARGET_TEST/g, args['--file']) + "\n";
+} else { // single test
+  script += build().replace(/\$\$TARGET_TEST/g, args['--file']) + "\n";
 }
 
 script = script.replace(/\$\$TEST_BINARY/g, args['--target']);
@@ -87,7 +149,7 @@ if (!isWindows) {
 
 taskman.tasker = [
   [test_script, "Testing.." ],
-  [function() { console.log('done.'); }]
+  [function() { console.log('Tests completed successfully'); }]
 ];
 
 taskman.runTasks();

@@ -33,7 +33,7 @@ exports.checkout = function(repo, id) {
 exports.exec = function(cmd, callback) {
   return exec_(cmd, eopts, function(err, stdout, stderr) {
     if (err) {
-      console.error(err);
+      console.error(stdout + "\n" + stderr);
       console.error("FAILED:", cmd);
       process.exit(1);
     } else {

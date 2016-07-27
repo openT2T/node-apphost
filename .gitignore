@@ -15,3 +15,8 @@ Release/
 *.lib
 *.dll
 *.exe
+*.exp
+*.ilk
+*.pdb
+current.vcxproj
+winproj/test_app/test.cpp

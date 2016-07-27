@@ -253,7 +253,12 @@ var patch_nodejs = function() {
 var patch_jxcore = function() {
   console.log("[ patching jx.gyp ]")
   var node_gyp = fs.readFileSync('./jxcore/jx.gyp') + "";
-  node_gyp = node_gyp.replace("'sources': [\n", "'sources': [\n'../patch/jxcore/jxcore_wrapper.cc',\n");
+  var len = node_gyp.length;
+  node_gyp = node_gyp.replace("'sources': [", "'sources': [\n'../patch/jxcore/jxcore_wrapper.cc',\n");
+  if (len == node_gyp.length) {
+    console.error("FAILED to patch jx.gyp");
+    process.exit(1);
+  }
   fs.writeFileSync('./jxcore/jx.gyp', node_gyp);
 };
 
@@ -262,8 +267,11 @@ var finalize = function() {
 };
 
 var compiled_script_path = compile(forced_target);
+// create batch files
 createBatch();
 
+// tasker will be executing each one of them one by one
+// if any of these actions fail, execution will stop
 taskman.tasker.push(
   [patch_nodejs],
   [patch_jxcore],

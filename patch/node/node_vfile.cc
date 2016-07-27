@@ -68,7 +68,12 @@ void AddFile(const char* path, char *contents, size_t length) {
   VFile *vf = new VFile(contents, length);
   files[path] = vf;
 
-  std::string str = "../";
+  std::string str =
+#ifdef _WIN32
+  "..\\";
+#else
+  "../";
+#endif
   str += path;
   files[str.c_str()] = vf;
 }
