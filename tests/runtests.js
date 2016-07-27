@@ -88,7 +88,10 @@ var tests = [
 
 // find visual studio environment batch file and execute
 // this is needed for msbuild
-var script = 
+var script = ""
+
+if (isWindows) {
+  script +=  
       "@echo off"
     + "\nset target_env=vc2015"
     + "\n@rem Set environment for msbuild"
@@ -129,6 +132,7 @@ var script =
     + "\n"
     + "\n:msbuild-found"
     + "\n";
+}
 
 if (!args.hasOwnProperty('--file')) { // test all
   for(var i=0; i<tests.length; i++) {

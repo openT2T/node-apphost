@@ -147,6 +147,15 @@ var createBatch = function() {
   fs.writeFileSync('./temp/checkout_jxcore.bat', taskman.checkout('jxcore', br_jxcore));
 
   if (!isWindows) {
+    fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
+                                      + '\nexit $?');
+  } else {
+    fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
+                                      + '\nexit %errorlevel%');
+  }
+
+  if (!isWindows) {
+    fs.chmodSync('./temp/test.bat', '0755');
     fs.chmodSync('./temp/clean.bat', '0755');
     fs.chmodSync('./temp/compile.bat', '0755');
     fs.chmodSync('./temp/checkout_node.bat', '0755');
@@ -276,7 +285,8 @@ taskman.tasker.push(
   [patch_nodejs],
   [patch_jxcore],
   [compiled_script_path, "building for " + forced_target + "@" + platform],
-  [isWindows ? path.join(__dirname, "temp\\copy.bat") : null, "copying Windows binaries"],
+  [isWindows ? path.join(__dirname, "temp/copy.bat") : null, "copying Windows binaries"],
+  [args.hasOwnProperty('--test') ? path.join(__dirname, "temp/test.bat") : null, "testing"],
   [finalize]
 );
 
