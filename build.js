@@ -129,14 +129,14 @@ var createBatch = function() {
 
   if (isWindows) {
     fs.writeFileSync('./temp/clean.bat', 'cd %1\ngit checkout -f');
-    fs.writeFileSync('./temp/copy.bat',  ('del winproj\\test_app\\*.lib \n'
-                                       + 'del winproj\\test_app\\*.dll \n'
-                                       + 'del winproj\\test_app\\*.exe \n'
-                                       + 'copy $$TARGET\\$$MODE\\*.lib winproj\\test_app\\ \n'
-                                       + 'copy $$TARGET\\$$MODE\\*.dll winproj\\test_app\\ \n'
-                                       + 'copy $$TARGET\\$$MODE\\*.exe winproj\\test_app\\ \n')
+    fs.writeFileSync('./temp/copy.bat',  ('del $TAPP*.lib \n'
+                                       + 'del $TAPP*.dll \n'
+                                       + 'del $TAPP*.exe \n'
+                                       + 'copy $$TARGET\\$$MODE\\*.lib $TAPP\n'
+                                       + 'copy $$TARGET\\$$MODE\\*.dll $TAPP\n')
                                        .replace(/\$\$MODE/g, release ? "Release" : "Debug")
-                                       .replace(/\$\$TARGET/g, forced_target));
+                                       .replace(/\$TAPP/g, path.join(__dirname, 'winproj\\test_app/'))
+                                       .replace(/\$\$TARGET/g, path.join(__dirname, forced_target)));
   } else {
     fs.writeFileSync('./temp/clean.bat', 'cd $1;git checkout -f');
   }
@@ -268,7 +268,7 @@ taskman.tasker.push(
   [patch_nodejs],
   [patch_jxcore],
   [compiled_script_path, "building for " + forced_target + "@" + platform],
-  [isWindows ? "temp\\copy.bat" : null, "copying Windows binaries"],
+  [isWindows ? path.join(__dirname, "temp\\copy.bat") : null, "copying Windows binaries"],
   [finalize]
 );
 
