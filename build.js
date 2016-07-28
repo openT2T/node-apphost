@@ -10,6 +10,8 @@ function print_help(exit_code) {
     {option: "", text: ""}, // placeholder
     {option: "--cid_node=[commit-id]", text: "Checkout a particular commit from node/node-chakracore repo"},
     {option: "--cid_jxcore=[commit-id]", text: "Checkout a particular commit from jxcore repo"},
+    {option: "--url_node=[node repo url]", text: "URL for node.js Github repo"},
+    {option: "--url_jxcore=[jx repo url]", text: "URL for jxcore Github repo"},
     {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
     {option: "--ndk-path=[path]", text: "path to android ndk. This option is required for platform=android"},
     {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-arm)"},
@@ -41,6 +43,8 @@ function createScript() {
   if (!isWindows) {
     if (args.hasOwnProperty('--dest-cpu')) {
       cpu = "--dest-cpu=" + args['--dest-cpu'];
+    } else {
+      cpu = "--dest-cpu=ia32"
     }
 
     if (platform == "ios" || platform == "android" || forced_target == 'jxcore') {
@@ -148,9 +152,11 @@ var createBatch = function() {
 
   if (!isWindows) {
     fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
+                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'ia32')
                                       + '\nexit $?');
   } else {
     fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
+                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'ia32')
                                       + '\nexit %errorlevel%');
   }
 
@@ -164,12 +170,21 @@ var createBatch = function() {
 }
 
 var setup = function() {
+  var node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs');
+  if (args.hasOwnProperty('--url_node')) {
+    node_url = args['--url_node'];
+  }
+
+  var jxcore_url = 'https://github.com/jxcore/jxcore';
+  if (args.hasOwnProperty('--url_jxcore')) {
+    jxcore_url = args['--url_jxcore'];
+  }
+
   taskman.tasker = [
     [taskman.rmdir('nodejs'), "deleting nodejs folder"],
     [taskman.rmdir('jxcore'), "deleting jxcore folder"],
-    [taskman.clone(isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs'),
-                                "cloning nodejs"],
-    [taskman.clone('jxcore/jxcore', 'jxcore'), "cloning jxcore"],
+    [taskman.clone(node_url, 'nodejs'), "cloning nodejs"],
+    [taskman.clone(jxcore_url, 'jxcore'), "cloning jxcore"],
     [path.join(__dirname, 'temp/checkout_node.bat'), "checkout nodejs branch"],
     [path.join(__dirname, 'temp/checkout_jxcore.bat'), "checkout jxcore branch"]
   ];
@@ -200,32 +215,36 @@ var patch_nodejs = function() {
       console.error('FATAL ERROR: could not patch node.gyp with cc files');
       process.exit(1);
     }
-    node_gyp = node_gyp.replace(/shared_library/g, 'loadable_module');
-    len_gyp = node_gyp.length;
+    if (isWindows) {
+      node_gyp = node_gyp.replace(/shared_library/g, 'loadable_module');
+      len_gyp = node_gyp.length;
 
-    // todo: make this regex
-    node_gyp = node_gyp.replace("[ 'node_shared==\"false\"', {",
-        "['node_shared==\"true\"',{'msvs_settings':"
-      + "{'VCCLCompilerTool':{'RuntimeLibrary': 3}}}],\n"
-      + "[ 'node_shared==\"false\"', {");
+      // todo: make this regex
+      node_gyp = node_gyp.replace("[ 'node_shared==\"false\"', {",
+          "['node_shared==\"true\"',{'msvs_settings':"
+        + "{'VCCLCompilerTool':{'RuntimeLibrary': 3}}}],\n"
+        + "[ 'node_shared==\"false\"', {");
 
-    if (node_gyp.length == len_gyp) {
-      console.error('FATAL ERROR: could not patch node.gyp with MSVS settings');
-      process.exit(1);
+      if (node_gyp.length == len_gyp) {
+        console.error('FATAL ERROR: could not patch node.gyp with MSVS settings');
+        process.exit(1);
+      }
+      len_gyp = node_gyp.length;
+
+      node_gyp = node_gyp.replace(/node_module_version!=\"\"/g,
+                  'node_module_version!="" and OS!="win"');
     }
-    len_gyp = node_gyp.length;
-
-    node_gyp = node_gyp.replace(/node_module_version!=\"\"/g,
-                'node_module_version!="" and OS!="win"');
 
     fs.writeFileSync('./nodejs/node.gyp', node_gyp);
   }
 
-  console.log("nodejs -> [ patching configure ]");
-  {
-    var node_configure = fs.readFileSync('./nodejs/configure') + "";
-    fs.writeFileSync('./nodejs/configure',
-        node_configure.replace('b(options.shared)',"'true'"));
+  if (isWindows) {
+    console.log("nodejs -> [ patching configure ]");
+    {
+      var node_configure = fs.readFileSync('./nodejs/configure') + "";
+      fs.writeFileSync('./nodejs/configure',
+          node_configure.replace('b(options.shared)',"'true'"));
+    }
   }
 
   console.log("nodejs -> [ patching node.cc ]");

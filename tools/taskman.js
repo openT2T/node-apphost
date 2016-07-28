@@ -23,7 +23,7 @@ exports.rmdir = function(f) {
 };
 
 exports.clone = function(repo, target) {
-  return "git clone https://github.com/" + repo + " " + target;
+  return repo + " " + target;
 };
 
 exports.checkout = function(repo, id) {

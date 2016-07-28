@@ -11,6 +11,7 @@ function print_help(exit_code) {
   var params = [
     {option: "--help", text: "display available options"},
     {option: "", text: ""}, // placeholder
+    {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
     {option: "--file=[test name]", text: "Test only the given single test"},
     {option: "--mode=[build mode]", text: "Set Debug, or Release. Default `Debug`"},
     {option: "--target=[target binary]", text: "Set jxcore, or nodejs. [Required]"}
@@ -37,7 +38,20 @@ if (args.hasOwnProperty('--help')) {
     var proj_file = path.join(__dirname, "../winproj/test_app/test_app.vcxproj");
     var file = fs.readFileSync(proj_file) + "";
     file = file.replace("$NODE_DISTRO$", (args['--target'] == 'jxcore' ? 'jx' : 'node'));
+    file = file.replace(/\$TARGET_ARCH/g, getARCH());
     fs.writeFileSync(path.join(path.dirname(proj_file), "current.vcxproj"), file);
+  }
+}
+
+function getARCH() {
+  var arch = (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'ia32');
+  if (!isWindows) {
+    if (arch == 'ia32' || arch == 'x86') return '-m32'
+    if (arch == 'x64' || arch == 'x86_64' || arch == 'amd64') return '-m64'
+
+    return '-m32';
+  } else {
+    console.log("IMPLEMENT ME (getARCH) WINDOWS");
   }
 }
 
@@ -47,7 +61,8 @@ function build() {
          + "echo Testing $$TARGET_TEST\n"
          + "make BUILD_TYPE=" + build_type
          + " TARGET_TEST=$$TARGET_TEST TEST_BINARY=$$TEST_BINARY "
-         + "PLATFORM=" + process.platform + "\n"
+         + " DEST_CPU=" + getARCH()
+         + " PLATFORM=" + process.platform + "\n"
          + "OUT=$?\n"
          + "if [ $OUT == 0 ]; then\n"
          + "  ./test.o\n"

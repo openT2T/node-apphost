@@ -45,7 +45,7 @@ LIBS=-pthread -lm -ldl -Wno-c++11-compat-deprecated-writable-strings \
 endif
 
 testmake:
-	$(CC) $(DEF) $(TARGET_TEST)/test.cpp $(CFLAGS) $(FORCE_STARTS) $(LDIR) $(FORCE_ENDS) $(LIBS)
+	$(CC) $(DEST_CPU) $(DEF) $(TARGET_TEST)/test.cpp $(CFLAGS) $(FORCE_STARTS) $(LDIR) $(FORCE_ENDS) $(LIBS)
 
 .PHONY: clean
 
