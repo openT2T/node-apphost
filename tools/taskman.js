@@ -23,7 +23,7 @@ exports.rmdir = function(f) {
 };
 
 exports.clone = function(repo, target) {
-  return repo + " " + target;
+  return "git clone " + repo + " " + target;
 };
 
 exports.checkout = function(repo, id) {
@@ -47,7 +47,7 @@ exports.runTasks = function() {
   if (!exports.tasker.length) return;
 
   var task = exports.tasker.shift();
-  if (task[0] && task[1]) {
+  if (task && task[0] && task[1]) {
     console.log("Running [", task[1], "]");
     task = task[0];
     exports.exec(task, function(callback){
@@ -56,7 +56,7 @@ exports.runTasks = function() {
       }
     });
   } else {
-    if (task[0]) {
+    if (task && task[0]) {
       task[0]();
     }
     setTimeout(exports.runTasks, 0);

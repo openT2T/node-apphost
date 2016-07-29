@@ -20,3 +20,4 @@ Release/
 *.pdb
 current.vcxproj
 winproj/test_app/test.cpp
+out/

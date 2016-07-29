@@ -37,9 +37,9 @@ if (args.hasOwnProperty('--help')) {
 var platform = args.hasOwnProperty('--platform') ? args['--platform'] : 'desktop';
 var forced_target = args['--force-target'];
 var release = args.hasOwnProperty('--release');
+var cpu = "";
 
 function createScript() {
-  var cpu = "";
   if (!isWindows) {
     if (args.hasOwnProperty('--dest-cpu')) {
       cpu = "--dest-cpu=" + args['--dest-cpu'];
@@ -170,7 +170,7 @@ var createBatch = function() {
 }
 
 var setup = function() {
-  var node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node', 'nodejs');
+  var node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node');
   if (args.hasOwnProperty('--url_node')) {
     node_url = args['--url_node'];
   }
@@ -290,13 +290,84 @@ var patch_jxcore = function() {
   fs.writeFileSync('./jxcore/jx.gyp', node_gyp);
 };
 
+function safeCreate(target) {
+  target = path.join(__dirname, target);
+  try {
+    fs.mkdirSync(target);
+  } catch(e) {
+    if (!fs.existsSync(target)) {
+      throw e;
+    }
+  }
+}
+
+var output_folder = "";
+var createRelease = function() {
+  console.log("[ creating release folder ]");
+  safeCreate('out');
+  var dirs = {
+    target: '',
+    source: '',
+    types : []
+  };
+
+  var cpu_ = cpu.replace('--dest-cpu=', '');
+  if (platform == 'android') {
+    dirs.target = 'out' + path.sep + forced_target + '_android_' + cpu_;
+    dirs.source = 'jxcore/out_android/android/bin/';
+    dirs.types = [ '*.a' ];
+  } else if (platform == 'ios') {
+    dirs.target = 'out' + path.sep + forced_target + '_ios_' + cpu_;
+    dirs.source = 'jxcore/out_ios/ios/bin/';
+    dirs.types = [ '*.a' ];
+  } else if (platform == 'desktop') {
+    dirs.target = 'out' + path.sep + forced_target + '_desktop_' + cpu_;
+    if (isWindows) {
+      dirs.source = forced_target + path.sep
+                + (args.hasOwnProperty('--release') ? 'Release' : 'Debug');
+      dirs.types = [ '*.dll', '*.lib' ];
+    } else {
+      dirs.source = forced_target + path.sep + 'out' + path.sep
+                + (args.hasOwnProperty('--release') ? 'Release' : 'Debug')
+                + path.sep;
+      dirs.types = [ '*.a' ];
+    }
+  } else {
+    throw new Error("Unsupported platform: " + platform);
+  }
+
+  var copy_script = "";
+  var source = path.join(__dirname, dirs.source);
+  var target = path.join(__dirname, dirs.target);
+  var copy = (isWindows ? "copy" : "cp");
+  for(var o in dirs.types) {
+    var tp = dirs.types[o];
+    copy_script += copy + " " + source + path.sep + tp + " " + target + path.sep + "\n";
+  }
+  copy_script += copy + " "
+              + path.join(__dirname, "patch" + path.sep + "node" + path.sep + "node_wrapper.h")
+              + " " + target + path.sep + "\n";
+
+  safeCreate(dirs.target);
+  var script_file = path.join(__dirname, "temp" + path.sep + "distro.bat");
+  fs.writeFileSync(script_file, copy_script);
+  if (!isWindows) {
+    fs.chmodSync(script_file, "0755");
+  }
+
+  output_folder = dirs.target;
+  return script_file
+};
+
 var finalize = function() {
   console.log('done.');
 };
 
-var compiled_script_path = compile(forced_target);
 // create batch files
 createBatch();
+
+var compiled_script_path = compile(forced_target);
+var release_script = createRelease();
 
 // tasker will be executing each one of them one by one
 // if any of these actions fail, execution will stop
@@ -306,6 +377,7 @@ taskman.tasker.push(
   [compiled_script_path, "building for " + forced_target + "@" + platform],
   [isWindows ? path.join(__dirname, "temp/copy.bat") : null, "copying Windows binaries"],
   [args.hasOwnProperty('--test') ? path.join(__dirname, "temp/test.bat") : null, "testing"],
+  [release_script, "copying binaries into " + output_folder],
   [finalize]
 );
 
