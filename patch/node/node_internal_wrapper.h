@@ -445,10 +445,10 @@ class JSValueWrapper {
   JSValueWrapper *wrap##x_ = (JSValueWrapper *)x; \
   delete wrap##x_
 
-#define UNWRAP_COM(arg)                                   \
-  assert(arg.com_ && "com_ can not be NULL");             \
-  node::Environment *env = (node::Environment *)arg.com_; \
-  JS_DEFINE_STATE_MARKER(env);                            \
+#define UNWRAP_COM(arg)                                    \
+  assert(arg->com_ && "com_ can not be NULL");             \
+  node::Environment *env = (node::Environment *)arg->com_; \
+  JS_DEFINE_STATE_MARKER(env);                             \
   ScopeWatch watcher(__contextORisolate)
 
 #define JS_ENGINE_LOCKER()                   \
@@ -470,7 +470,7 @@ class JSValueWrapper {
   }
 
 #define EMPTY_CHECK(x) \
-  if (value.type_ == RT_Null || value.type_ == RT_Undefined) return x
+  if (value->type_ == RT_Null || value->type_ == RT_Undefined) return x
 
 #define UNWRAP_RESULT(x) JSValueWrapper *wrap = (JSValueWrapper *)x
 

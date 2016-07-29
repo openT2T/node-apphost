@@ -22,3 +22,8 @@ current.vcxproj
 current.sln
 winproj/test_app/test.cpp
 out/
+*.mode1v3
+*.perspectivev3
+*.pbxuser
+.DS_Store
+build/

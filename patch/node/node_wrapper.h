@@ -44,169 +44,152 @@ struct _JSValue {
   void *data_;
   size_t size_;
   JS_ValueType type_;
-
+#ifdef __cplusplus
   _JSValue():com_(nullptr), persistent_(false), was_stored_(false),
              data_(nullptr), size_(0) { }
+#endif
 };
 
 typedef struct _JSValue JS_Value;
 
+// Call a JS side function.
+// fnc: Function
+// params: Arguments
+// argc: Count of Arguments
+// out: Return value from function
 NWRAP_EXTERN(bool)
-JS_CallFunction(JS_Value &fnc, JS_Value *params, const int argc, JS_Value *out);
+JS_CallFunction(JS_Value *fnc, JS_Value *params, const int argc, JS_Value *out);
+
+// Make a JS_Value persistent, so JS engine wouldn't Garbage Collect that
+NWRAP_EXTERN(bool)
+JS_MakePersistent(JS_Value *value);
+
+// Remove persistent mark. JS engine may collect this object any time
+NWRAP_EXTERN(bool)
+JS_ClearPersistent(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_MakePersistent(JS_Value &value);
+JS_IsFunction(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_ClearPersistent(JS_Value &value);
+JS_IsError(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsFunction(JS_Value &value);
+JS_IsInt32(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsError(JS_Value &value);
+JS_IsDouble(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsInt32(JS_Value &value);
+JS_IsBoolean(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsDouble(JS_Value &value);
+JS_IsString(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsBoolean(JS_Value &value);
+JS_IsJSON(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsString(JS_Value &value);
+JS_IsBuffer(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsJSON(JS_Value &value);
+JS_IsUndefined(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsBuffer(JS_Value &value);
+JS_IsNull(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsUndefined(JS_Value &value);
+JS_IsNullOrUndefined(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_IsNull(JS_Value &value);
-
-NWRAP_EXTERN(bool)
-JS_IsNullOrUndefined(JS_Value &value);
-
-NWRAP_EXTERN(bool)
-JS_IsObject(JS_Value &value);
+JS_IsObject(JS_Value *value);
 
 NWRAP_EXTERN(int32_t)
-JS_GetInt32(JS_Value &value);
+JS_GetInt32(JS_Value *value);
 
 NWRAP_EXTERN(double)
-JS_GetDouble(JS_Value &value);
+JS_GetDouble(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_GetBoolean(JS_Value &value);
+JS_GetBoolean(JS_Value *value);
 
 NWRAP_EXTERN(char *)
-JS_GetString(JS_Value &value);
+JS_GetString(JS_Value *value);
 
 NWRAP_EXTERN(int32_t)
-JS_GetDataLength(JS_Value &value);
+JS_GetDataLength(JS_Value *value);
 
 NWRAP_EXTERN(char *)
-JS_GetBuffer(JS_Value &value);
+JS_GetBuffer(JS_Value *value);
 
 NWRAP_EXTERN(void)
-JS_SetInt32(JS_Value &value, const int32_t val);
+JS_SetInt32(JS_Value *value, const int32_t val);
 
 NWRAP_EXTERN(void)
-JS_SetDouble(JS_Value &value, const double val);
+JS_SetDouble(JS_Value *value, const double val);
 
 NWRAP_EXTERN(void)
-JS_SetBoolean(JS_Value &value, const bool val);
-
-#ifdef __cplusplus
-NWRAP_EXTERN(void)
-JS_SetString(JS_Value &value, const char *val, const int32_t length = 0);
-#else
-NWRAP_EXTERN(void)
-JS_SetString(JS_Value &value, const char *val, const int32_t length);
-#endif
-
-#ifdef __cplusplus
-NWRAP_EXTERN(void)
-JS_SetUCString(JS_Value &value, const uint16_t *val, const int32_t length = 0);
-#else
-NWRAP_EXTERN(void)
-JS_SetUCString(JS_Value &value, const uint16_t *val, const int32_t length);
-#endif
-
-#ifdef __cplusplus
-NWRAP_EXTERN(void)
-JS_SetJSON(JS_Value &value, const char *val, const int32_t length = 0);
-#else
-NWRAP_EXTERN(void)
-JS_SetJSON(JS_Value &value, const char *val, const int32_t length);
-#endif
-
-#ifdef __cplusplus
-NWRAP_EXTERN(void)
-JS_SetError(JS_Value &value, const char *val, const int32_t length = 0);
-#else
-NWRAP_EXTERN(void)
-JS_SetError(JS_Value &value, const char *val, const int32_t length);
-#endif
-
-#ifdef __cplusplus
-NWRAP_EXTERN(void)
-JS_SetBuffer(JS_Value &value, const char *val, const int32_t length = 0);
-#else
-NWRAP_EXTERN(void)
-JS_SetBuffer(JS_Value &value, const char *val, const int32_t length);
-#endif
+JS_SetBoolean(JS_Value *value, const bool val);
 
 NWRAP_EXTERN(void)
-JS_SetUndefined(JS_Value &value);
+JS_SetString(JS_Value *value, const char *val, const int32_t length);
 
 NWRAP_EXTERN(void)
-JS_SetNull(JS_Value &value);
+JS_SetUCString(JS_Value *value, const uint16_t *val, const int32_t length);
 
 NWRAP_EXTERN(void)
-JS_SetObject(JS_Value &host, JS_Value &val);
+JS_SetJSON(JS_Value *value, const char *val, const int32_t length);
 
 NWRAP_EXTERN(void)
-JS_Free(JS_Value &value);
+JS_SetError(JS_Value *value, const char *val, const int32_t length);
+
+NWRAP_EXTERN(void)
+JS_SetBuffer(JS_Value *value, const char *val, const int32_t length);
+
+NWRAP_EXTERN(void)
+JS_SetUndefined(JS_Value *value);
+
+NWRAP_EXTERN(void)
+JS_SetNull(JS_Value *value);
+
+NWRAP_EXTERN(void)
+JS_SetObject(JS_Value *host, JS_Value *val);
+
+NWRAP_EXTERN(void)
+JS_Free(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_New(JS_Value &value);
+JS_New(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_CreateEmptyObject(JS_Value &value);
+JS_CreateEmptyObject(JS_Value *value);
 
 NWRAP_EXTERN(bool)
-JS_CreateArrayObject(JS_Value &value);
+JS_CreateArrayObject(JS_Value *value);
 
 NWRAP_EXTERN(void)
-JS_SetNamedProperty(JS_Value &object, const char *name, JS_Value &prop);
+JS_SetNamedProperty(JS_Value *object, const char *name, JS_Value *prop);
 
 NWRAP_EXTERN(void)
-JS_SetIndexedProperty(JS_Value &object, const unsigned index, JS_Value &prop);
+JS_SetIndexedProperty(JS_Value *object, const unsigned index, JS_Value *prop);
 
 NWRAP_EXTERN(void)
-JS_GetNamedProperty(JS_Value &object, const char *name, JS_Value &out);
+JS_GetNamedProperty(JS_Value *object, const char *name, JS_Value *out);
 
 NWRAP_EXTERN(void)
-JS_GetIndexedProperty(JS_Value &object, const int index, JS_Value &out);
+JS_GetIndexedProperty(JS_Value *object, const int index, JS_Value *out);
 
 NWRAP_EXTERN(void)
-JS_GetGlobalObject(JS_Value &out);
+JS_GetGlobalObject(JS_Value *out);
 
 NWRAP_EXTERN(void)
-JS_GetProcessObject(JS_Value &out);
+JS_GetProcessObject(JS_Value *out);
 
 NWRAP_EXTERN(void)
-JS_WrapObject(JS_Value &object, void *ptr);
+JS_WrapObject(JS_Value *object, void *ptr);
 
 NWRAP_EXTERN(void *)
-JS_UnwrapObject(JS_Value &object);
+JS_UnwrapObject(JS_Value *object);
 
 typedef void (*JS_CALLBACK)(JS_Value *result, int argc);
 typedef void (*NODE_INIT_CALLBACK)(void);
@@ -220,7 +203,7 @@ typedef void (*NODE_INIT_CALLBACK)(void);
 // 3 - script_name represents the script's file name
 // 4 - script_code expects a Utf8/ASCII JavaScript code with \0 ending
 NWRAP_EXTERN(bool)
-JS_Evaluate(const char *script_code, const char *script_name, JS_Value &result);
+JS_Evaluate(const char *script_code, const char *script_name, JS_Value *result);
 
 // Define the contents of main.js file (entry script)
 NWRAP_EXTERN(void)
@@ -253,7 +236,7 @@ JS_SetProcessNative(const char *name, JS_CALLBACK callback);
 // native code: JS_DefineMethod(obj, "testMethod", my_callback);
 // js code: obj.testMethod(1, true);
 NWRAP_EXTERN(void)
-JS_SetNativeMethod(JS_Value &obj, const char *name, JS_CALLBACK callback);
+JS_SetNativeMethod(JS_Value *obj, const char *name, JS_CALLBACK callback);
 
 // loop io events for once. If there is any IO left to do
 // this method returns 1 otherwise 0

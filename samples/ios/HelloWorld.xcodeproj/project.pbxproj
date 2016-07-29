@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0207DA571B56EA530066E2B4 /* Images.xcassets */; };
+		02552BE30FC347988C641670 /* JXcore.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FC6CB736C85430E96590B6B /* JXcore.m */; };
+		1BF6499ABE9445A989AF565C /* libjx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A29AA170EEA0480AA667FE42 /* libjx.a */; };
+		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
+		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
+		301BF552109A68D80062928A /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF535109A57CC0062928A /* libCordova.a */; };
+		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
+		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
+		403191165D3B4973B9E1E398 /* libchrome_zlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56EEAFE0BD0342FA9AF0A2F3 /* libchrome_zlib.a */; };
+		52D8782F70A44005B683462E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C7F5C22B96643C4A443E35D /* Security.framework */; };
+		5AEF2567FB414F09876F6348 /* jxcore_cordova.js in Resources */ = {isa = PBXBuildFile; fileRef = 98AA3A09EC67472694BF763D /* jxcore_cordova.js */; };
+		6B4921EBE245497B85A4CB89 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6A351FB3C664A00AA59674E /* CFNetwork.framework */; };
+		7CFE00C19E024570A0A87F23 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38B2F2359AD44675B55C6D47 /* Foundation.framework */; };
+		7F0C2E80A9F549ECB4F8B108 /* libmozjs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1502DE07E5974E069B7384F9 /* libmozjs.a */; };
+		8FA9ABFFB1AA4EFDAA30DF04 /* JXMobile.m in Sources */ = {isa = PBXBuildFile; fileRef = 62D39F31BED54DC4A55F088E /* JXMobile.m */; };
+		9587456CAA414D048E0C5A92 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B475B2B0CE446D9F87BD79 /* Reachability.m */; };
+		98F2A01CD3784833A20D0958 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AB19BF0A901416AAC0E019C /* libcares.a */; };
+		9F58AF8A1D4BF3F400038B4F /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 9F58AF891D4BF3F400038B4F /* config.xml */; };
+		ABD5AD7397A04641A21EFB01 /* libopenssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CDE4BE2E3544E75A77B6461 /* libopenssl.a */; };
+		AC9DEB91ADF2435F865A6A5C /* libhttp_parser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 003EE7585CF744F781DDD3AA /* libhttp_parser.a */; };
+		B83C3CF4EB584406943D170A /* libstdc++.6.0.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C4575EA08AA24FC794CE93A3 /* libstdc++.6.0.9.dylib */; };
+		D2CD54FB51E14DCFA91CFFDF /* libsqlite3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C4BE11A58A19431A8897A039 /* libsqlite3.a */; };
+		DC5144FD7DD0437C9422C515 /* libuv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FBD7499723F542FFB80F77BD /* libuv.a */; };
+		EE80D873FEE440778A8230EC /* CDVJXcore.m in Sources */ = {isa = PBXBuildFile; fileRef = DAF34F9911BA4BABA9D64FF4 /* CDVJXcore.m */; };
+		F39067BA42D94420AE5909CD /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA9774939E0F49E5A73750CE /* SystemConfiguration.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		301BF534109A57CC0062928A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC07E0554694100DB518D;
+			remoteInfo = CordovaLib;
+		};
+		301BF550109A68C00062928A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = CordovaLib;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		003EE7585CF744F781DDD3AA /* libhttp_parser.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libhttp_parser.a; path = HelloWorld/Plugins/io.jxcore.node/libhttp_parser.a; sourceTree = "<group>"; };
+		0207DA571B56EA530066E2B4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = HelloWorld/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		0C7F5C22B96643C4A443E35D /* Security.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		0FC6CB736C85430E96590B6B /* JXcore.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = JXcore.m; path = io.jxcore.node/JXcore.m; sourceTree = "<group>"; };
+		11640A6D89E6443280CA189E /* JXcoreExtension.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = JXcoreExtension.h; path = io.jxcore.node/JXcoreExtension.h; sourceTree = "<group>"; };
+		1502DE07E5974E069B7384F9 /* libmozjs.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libmozjs.a; path = HelloWorld/Plugins/io.jxcore.node/libmozjs.a; sourceTree = "<group>"; };
+		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1D6058910D05DD3D006BFB54 /* HelloWorld.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HelloWorld.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2CDE4BE2E3544E75A77B6461 /* libopenssl.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libopenssl.a; path = HelloWorld/Plugins/io.jxcore.node/libopenssl.a; sourceTree = "<group>"; };
+		301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
+		301BF56E109A69640062928A /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = SOURCE_ROOT; };
+		302D95EE14D2391D003F00A1 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		302D95EF14D2391D003F00A1 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		302D95F014D2391D003F00A1 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		3047A50F1AB8059700498E2A /* build-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-debug.xcconfig"; path = "cordova/build-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		3047A5101AB8059700498E2A /* build-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "build-release.xcconfig"; path = "cordova/build-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		3047A5111AB8059700498E2A /* build.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = build.xcconfig; path = cordova/build.xcconfig; sourceTree = SOURCE_ROOT; };
+		32CA4F630368D1EE00C91783 /* HelloWorld-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "HelloWorld-Prefix.pch"; sourceTree = "<group>"; };
+		38B2F2359AD44675B55C6D47 /* Foundation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4F3F6BD9AAD14F4A86847BF9 /* Reachability.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = Reachability.h; path = io.jxcore.node/Reachability.h; sourceTree = "<group>"; };
+		56EEAFE0BD0342FA9AF0A2F3 /* libchrome_zlib.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libchrome_zlib.a; path = HelloWorld/Plugins/io.jxcore.node/libchrome_zlib.a; sourceTree = "<group>"; };
+		5AB19BF0A901416AAC0E019C /* libcares.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libcares.a; path = HelloWorld/Plugins/io.jxcore.node/libcares.a; sourceTree = "<group>"; };
+		62D39F31BED54DC4A55F088E /* JXMobile.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = JXMobile.m; path = io.jxcore.node/JXMobile.m; sourceTree = "<group>"; };
+		74E782D610214AECB2746EAE /* node_wrapper.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = node_wrapper.h; path = io.jxcore.node/node_wrapper.h; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* HelloWorld-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "HelloWorld-Info.plist"; path = "HelloWorld/HelloWorld-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = SOURCE_ROOT; };
+		8EB0DD30DFB64312804DE43C /* CDVJXcore.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVJXcore.h; path = io.jxcore.node/CDVJXcore.h; sourceTree = "<group>"; };
+		98AA3A09EC67472694BF763D /* jxcore_cordova.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = jxcore_cordova.js; sourceTree = "<group>"; };
+		9F58AF891D4BF3F400038B4F /* config.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		A1B475B2B0CE446D9F87BD79 /* Reachability.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = Reachability.m; path = io.jxcore.node/Reachability.m; sourceTree = "<group>"; };
+		A29AA170EEA0480AA667FE42 /* libjx.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libjx.a; path = HelloWorld/Plugins/io.jxcore.node/libjx.a; sourceTree = "<group>"; };
+		C4575EA08AA24FC794CE93A3 /* libstdc++.6.0.9.dylib */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.0.9.dylib"; path = "usr/lib/libstdc++.6.0.9.dylib"; sourceTree = SDKROOT; };
+		C4BE11A58A19431A8897A039 /* libsqlite3.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libsqlite3.a; path = HelloWorld/Plugins/io.jxcore.node/libsqlite3.a; sourceTree = "<group>"; };
+		CA9774939E0F49E5A73750CE /* SystemConfiguration.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		D6A351FB3C664A00AA59674E /* CFNetwork.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		DAF34F9911BA4BABA9D64FF4 /* CDVJXcore.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = CDVJXcore.m; path = io.jxcore.node/CDVJXcore.m; sourceTree = "<group>"; };
+		DB24A71B0EA740469E5AA2D0 /* JXMobile.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = JXMobile.h; path = io.jxcore.node/JXMobile.h; sourceTree = "<group>"; };
+		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		F0D86ABAC3A8480493FC011B /* JXcore.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = JXcore.h; path = io.jxcore.node/JXcore.h; sourceTree = "<group>"; };
+		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = HelloWorld/config.xml; sourceTree = "<group>"; };
+		FBD7499723F542FFB80F77BD /* libuv.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; name = libuv.a; path = HelloWorld/Plugins/io.jxcore.node/libuv.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1D60588F0D05DD3D006BFB54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
+				98F2A01CD3784833A20D0958 /* libcares.a in Frameworks */,
+				403191165D3B4973B9E1E398 /* libchrome_zlib.a in Frameworks */,
+				AC9DEB91ADF2435F865A6A5C /* libhttp_parser.a in Frameworks */,
+				1BF6499ABE9445A989AF565C /* libjx.a in Frameworks */,
+				7F0C2E80A9F549ECB4F8B108 /* libmozjs.a in Frameworks */,
+				ABD5AD7397A04641A21EFB01 /* libopenssl.a in Frameworks */,
+				D2CD54FB51E14DCFA91CFFDF /* libsqlite3.a in Frameworks */,
+				DC5144FD7DD0437C9422C515 /* libuv.a in Frameworks */,
+				F39067BA42D94420AE5909CD /* SystemConfiguration.framework in Frameworks */,
+				B83C3CF4EB584406943D170A /* libstdc++.6.0.9.dylib in Frameworks */,
+				6B4921EBE245497B85A4CB89 /* CFNetwork.framework in Frameworks */,
+				7CFE00C19E024570A0A87F23 /* Foundation.framework in Frameworks */,
+				52D8782F70A44005B683462E /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				302D95EE14D2391D003F00A1 /* MainViewController.h */,
+				302D95EF14D2391D003F00A1 /* MainViewController.m */,
+				302D95F014D2391D003F00A1 /* MainViewController.xib */,
+				1D3623240D0F684500981E51 /* AppDelegate.h */,
+				1D3623250D0F684500981E51 /* AppDelegate.m */,
+			);
+			name = Classes;
+			path = HelloWorld/Classes;
+			sourceTree = SOURCE_ROOT;
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D6058910D05DD3D006BFB54 /* HelloWorld.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
+			isa = PBXGroup;
+			children = (
+				9F58AF891D4BF3F400038B4F /* config.xml */,
+				EB87FDF11871DA420020F90C /* Staging */,
+				301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */,
+				080E96DDFE201D6D7F000001 /* Classes */,
+				307C750510C5A3420062BCA9 /* Plugins */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = CustomTemplate;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32CA4F630368D1EE00C91783 /* HelloWorld-Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+				ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */,
+			);
+			name = "Other Sources";
+			path = HelloWorld;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0207DA571B56EA530066E2B4 /* Images.xcassets */,
+				3047A50E1AB8057F00498E2A /* config */,
+				8D1107310486CEB800E47090 /* HelloWorld-Info.plist */,
+				98AA3A09EC67472694BF763D /* jxcore_cordova.js */,
+			);
+			name = Resources;
+			path = HelloWorld/Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5AB19BF0A901416AAC0E019C /* libcares.a */,
+				56EEAFE0BD0342FA9AF0A2F3 /* libchrome_zlib.a */,
+				003EE7585CF744F781DDD3AA /* libhttp_parser.a */,
+				A29AA170EEA0480AA667FE42 /* libjx.a */,
+				1502DE07E5974E069B7384F9 /* libmozjs.a */,
+				2CDE4BE2E3544E75A77B6461 /* libopenssl.a */,
+				C4BE11A58A19431A8897A039 /* libsqlite3.a */,
+				FBD7499723F542FFB80F77BD /* libuv.a */,
+				CA9774939E0F49E5A73750CE /* SystemConfiguration.framework */,
+				C4575EA08AA24FC794CE93A3 /* libstdc++.6.0.9.dylib */,
+				D6A351FB3C664A00AA59674E /* CFNetwork.framework */,
+				38B2F2359AD44675B55C6D47 /* Foundation.framework */,
+				0C7F5C22B96643C4A443E35D /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		301BF52E109A57CC0062928A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				301BF535109A57CC0062928A /* libCordova.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3047A50E1AB8057F00498E2A /* config */ = {
+			isa = PBXGroup;
+			children = (
+				3047A50F1AB8059700498E2A /* build-debug.xcconfig */,
+				3047A5101AB8059700498E2A /* build-release.xcconfig */,
+				3047A5111AB8059700498E2A /* build.xcconfig */,
+			);
+			name = config;
+			sourceTree = "<group>";
+		};
+		307C750510C5A3420062BCA9 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				DAF34F9911BA4BABA9D64FF4 /* CDVJXcore.m */,
+				0FC6CB736C85430E96590B6B /* JXcore.m */,
+				62D39F31BED54DC4A55F088E /* JXMobile.m */,
+				A1B475B2B0CE446D9F87BD79 /* Reachability.m */,
+				8EB0DD30DFB64312804DE43C /* CDVJXcore.h */,
+				F0D86ABAC3A8480493FC011B /* JXcore.h */,
+				DB24A71B0EA740469E5AA2D0 /* JXMobile.h */,
+				4F3F6BD9AAD14F4A86847BF9 /* Reachability.h */,
+				11640A6D89E6443280CA189E /* JXcoreExtension.h */,
+				74E782D610214AECB2746EAE /* node_wrapper.h */,
+			);
+			name = Plugins;
+			path = HelloWorld/Plugins;
+			sourceTree = SOURCE_ROOT;
+		};
+		EB87FDF11871DA420020F90C /* Staging */ = {
+			isa = PBXGroup;
+			children = (
+				F840E1F0165FE0F500CFE078 /* config.xml */,
+				301BF56E109A69640062928A /* www */,
+			);
+			name = Staging;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1D6058900D05DD3D006BFB54 /* HelloWorld */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "HelloWorld" */;
+			buildPhases = (
+				304B58A110DAC018002A0835 /* Copy www directory */,
+				1D60588D0D05DD3D006BFB54 /* Resources */,
+				1D60588E0D05DD3D006BFB54 /* Sources */,
+				1D60588F0D05DD3D006BFB54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				301BF551109A68C00062928A /* PBXTargetDependency */,
+			);
+			name = HelloWorld;
+			productName = HelloWorld;
+			productReference = 1D6058910D05DD3D006BFB54 /* HelloWorld.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 510;
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HelloWorld" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 301BF52E109A57CC0062928A /* Products */;
+					ProjectRef = 301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				1D6058900D05DD3D006BFB54 /* HelloWorld */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		301BF535109A57CC0062928A /* libCordova.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCordova.a;
+			remoteRef = 301BF534109A57CC0062928A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1D60588D0D05DD3D006BFB54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */,
+				0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */,
+				5AEF2567FB414F09876F6348 /* jxcore_cordova.js in Resources */,
+				9F58AF8A1D4BF3F400038B4F /* config.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		304B58A110DAC018002A0835 /* Copy www directory */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy www directory";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "NODEJS_PATH=/usr/local/bin; NVM_NODE_PATH=~/.nvm/versions/node/`nvm version 2>/dev/null`/bin; N_NODE_PATH=`find /usr/local/n/versions/node/* -maxdepth 0 -type d 2>/dev/null | tail -1`/bin; XCODE_NODE_PATH=`xcode-select --print-path`/usr/share/xcs/Node/bin; PATH=$NODEJS_PATH:$NVM_NODE_PATH:$N_NODE_PATH:$XCODE_NODE_PATH:$PATH && node cordova/lib/copy-www-build-step.js";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D60588E0D05DD3D006BFB54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
+				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
+				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
+				EE80D873FEE440778A8230EC /* CDVJXcore.m in Sources */,
+				02552BE30FC347988C641670 /* JXcore.m in Sources */,
+				8FA9ABFFB1AA4EFDAA30DF04 /* JXMobile.m in Sources */,
+				9587456CAA414D048E0C5A92 /* Reachability.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		301BF551109A68C00062928A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CordovaLib;
+			targetProxy = 301BF550109A68C00062928A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1D6058940D05DD3E006BFB54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A50F1AB8059700498E2A /* build-debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "HelloWorld/HelloWorld-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				INFOPLIST_FILE = "HelloWorld/HelloWorld-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+				);
+				PRODUCT_NAME = HelloWorld;
+			};
+			name = Debug;
+		};
+		1D6058950D05DD3E006BFB54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5101AB8059700498E2A /* build-release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "HelloWorld/HelloWorld-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				INFOPLIST_FILE = "HelloWorld/HelloWorld-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+					"\"$(SRCROOT)/HelloWorld/Plugins/io.jxcore.node\"",
+				);
+				PRODUCT_NAME = HelloWorld;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5111AB8059700498E2A /* build.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3047A5111AB8059700498E2A /* build.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_THUMB_SUPPORT = NO;
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "HelloWorld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D6058940D05DD3E006BFB54 /* Debug */,
+				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "HelloWorld" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

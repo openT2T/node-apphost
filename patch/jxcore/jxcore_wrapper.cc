@@ -6,217 +6,217 @@
 #include <string>
 
 NWRAP_EXTERN(bool)
-JS_IsFunction(JS_Value &value) {
-  return JX_IsFunction((JXValue*)&value);
+JS_IsFunction(JS_Value *value) {
+  return JX_IsFunction((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsError(JS_Value &value) {
-  return JX_IsError((JXValue*)&value);
+JS_IsError(JS_Value *value) {
+  return JX_IsError((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsInt32(JS_Value &value) {
-  return JX_IsInt32((JXValue*)&value);
+JS_IsInt32(JS_Value *value) {
+  return JX_IsInt32((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsDouble(JS_Value &value) {
-  return JX_IsDouble((JXValue*)&value);
+JS_IsDouble(JS_Value *value) {
+  return JX_IsDouble((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsBoolean(JS_Value &value) {
-  return JX_IsBoolean((JXValue*)&value);
+JS_IsBoolean(JS_Value *value) {
+  return JX_IsBoolean((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsString(JS_Value &value) {
-  return JX_IsString((JXValue*)&value);
+JS_IsString(JS_Value *value) {
+  return JX_IsString((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsJSON(JS_Value &value) { return JX_IsObject((JXValue*)&value); }
+JS_IsJSON(JS_Value *value) { return JX_IsObject((JXValue*)value); }
 
 NWRAP_EXTERN(bool)
-JS_IsBuffer(JS_Value &value) {
-  return JX_IsBuffer((JXValue*)&value);
+JS_IsBuffer(JS_Value *value) {
+  return JX_IsBuffer((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsUndefined(JS_Value &value) {
-  return JX_IsUndefined((JXValue*)&value);
+JS_IsUndefined(JS_Value *value) {
+  return JX_IsUndefined((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsNull(JS_Value &value) {
-  return JX_IsNull((JXValue*)&value);
+JS_IsNull(JS_Value *value) {
+  return JX_IsNull((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsNullOrUndefined(JS_Value &value) {
-  return JX_IsNullOrUndefined((JXValue*)&value);
+JS_IsNullOrUndefined(JS_Value *value) {
+  return JX_IsNullOrUndefined((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_IsObject(JS_Value &value) {
-  return JX_IsObject((JXValue*)&value);
+JS_IsObject(JS_Value *value) {
+  return JX_IsObject((JXValue*)value);
 }
 
 NWRAP_EXTERN(int32_t)
-JS_GetInt32(JS_Value &value) {
-  return JX_GetInt32((JXValue*)&value);
+JS_GetInt32(JS_Value *value) {
+  return JX_GetInt32((JXValue*)value);
 }
 
 NWRAP_EXTERN(double)
-JS_GetDouble(JS_Value &value) {
-  return JX_GetDouble((JXValue*)&value);
+JS_GetDouble(JS_Value *value) {
+  return JX_GetDouble((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_GetBoolean(JS_Value &value) {
-  return JX_GetBoolean((JXValue*)&value);
+JS_GetBoolean(JS_Value *value) {
+  return JX_GetBoolean((JXValue*)value);
 }
 
 NWRAP_EXTERN(char *)
-JS_GetString(JS_Value &value) {
-  return JX_GetString((JXValue*)&value);
+JS_GetString(JS_Value *value) {
+  return JX_GetString((JXValue*)value);
 }
 
 NWRAP_EXTERN(int32_t)
-JS_GetDataLength(JS_Value &value) {
-  return JX_GetDataLength((JXValue*)&value);
+JS_GetDataLength(JS_Value *value) {
+  return JX_GetDataLength((JXValue*)value);
 }
 
 NWRAP_EXTERN(char *)
-JS_GetBuffer(JS_Value &value) {
-  return JX_GetBuffer((JXValue*)&value);
+JS_GetBuffer(JS_Value *value) {
+  return JX_GetBuffer((JXValue*)value);
 }
 
 NWRAP_EXTERN(void)
-JS_Free(JS_Value &value) {
-  JX_Free((JXValue*)&value);
+JS_Free(JS_Value *value) {
+  JX_Free((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_CallFunction(JS_Value& fnc, JS_Value *params, const int argc, JS_Value *out) {
-  return JX_CallFunction((JXValue*)&fnc, (JXValue*)params, argc, (JXValue*)out);
+JS_CallFunction(JS_Value *fnc, JS_Value *params, const int argc, JS_Value *out) {
+  return JX_CallFunction((JXValue*)fnc, (JXValue*)params, argc, (JXValue*)out);
 }
 
 NWRAP_EXTERN(void)
-JS_SetInt32(JS_Value &value, const int32_t val) {
-  JX_SetInt32((JXValue*)&value, val);
+JS_SetInt32(JS_Value *value, const int32_t val) {
+  JX_SetInt32((JXValue*)value, val);
 }
 
 NWRAP_EXTERN(void)
-JS_SetDouble(JS_Value &value, const double val) {
-  JX_SetDouble((JXValue*)&value, val);
+JS_SetDouble(JS_Value *value, const double val) {
+  JX_SetDouble((JXValue*)value, val);
 }
 
 NWRAP_EXTERN(void)
-JS_SetBoolean(JS_Value &value, const bool val) {
-  JX_SetBoolean((JXValue*)&value, val);
+JS_SetBoolean(JS_Value *value, const bool val) {
+  JX_SetBoolean((JXValue*)value, val);
 }
 
 NWRAP_EXTERN(void)
-JS_SetString(JS_Value &value, const char *val, const int32_t length) {
-  JX_SetString((JXValue*)&value, val, length);
+JS_SetString(JS_Value *value, const char *val, const int32_t length) {
+  JX_SetString((JXValue*)value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetUCString(JS_Value &value, const uint16_t *val, const int32_t _length) {
-  JX_SetUCString((JXValue*)&value, val, _length);
+JS_SetUCString(JS_Value *value, const uint16_t *val, const int32_t _length) {
+  JX_SetUCString((JXValue*)value, val, _length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetJSON(JS_Value &value, const char *val, const int32_t length) {
-  JX_SetJSON((JXValue*)&value, val, length);
+JS_SetJSON(JS_Value *value, const char *val, const int32_t length) {
+  JX_SetJSON((JXValue*)value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetError(JS_Value &value, const char *val, const int32_t length) {
-  JX_SetError((JXValue*)&value, val, length);
+JS_SetError(JS_Value *value, const char *val, const int32_t length) {
+  JX_SetError((JXValue*)value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetBuffer(JS_Value &value, const char *val, const int32_t length) {
-  JX_SetBuffer((JXValue*)&value, val, length);
+JS_SetBuffer(JS_Value *value, const char *val, const int32_t length) {
+  JX_SetBuffer((JXValue*)value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetUndefined(JS_Value &value) { JX_SetUndefined((JXValue*)&value); }
+JS_SetUndefined(JS_Value *value) { JX_SetUndefined((JXValue*)value); }
 
 NWRAP_EXTERN(void)
-JS_SetNull(JS_Value &value) { JX_SetNull((JXValue*)&value); }
+JS_SetNull(JS_Value *value) { JX_SetNull((JXValue*)value); }
 
 NWRAP_EXTERN(void)
-JS_SetObject(JS_Value &value_to, JS_Value &value_from) {
-  JX_SetObject((JXValue*)&value_to, (JXValue*)&value_from);
+JS_SetObject(JS_Value *value_to, JS_Value *value_from) {
+  JX_SetObject((JXValue*)value_to, (JXValue*)value_from);
 }
 
 NWRAP_EXTERN(bool)
-JS_MakePersistent(JS_Value &value) {
-  return JX_MakePersistent((JXValue*)&value);
+JS_MakePersistent(JS_Value *value) {
+  return JX_MakePersistent((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_ClearPersistent(JS_Value &value) {
-  return JX_ClearPersistent((JXValue*)&value);
+JS_ClearPersistent(JS_Value *value) {
+  return JX_ClearPersistent((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_New(JS_Value &value) {
-  return JX_New((JXValue*)&value);
+JS_New(JS_Value *value) {
+  return JX_New((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_CreateEmptyObject(JS_Value &value) {
-  return JX_CreateEmptyObject((JXValue*)&value);
+JS_CreateEmptyObject(JS_Value *value) {
+  return JX_CreateEmptyObject((JXValue*)value);
 }
 
 NWRAP_EXTERN(bool)
-JS_CreateArrayObject(JS_Value &value) {
-  return JX_CreateArrayObject((JXValue*)&value);
+JS_CreateArrayObject(JS_Value *value) {
+  return JX_CreateArrayObject((JXValue*)value);
 }
 
 NWRAP_EXTERN(void)
-JS_SetNamedProperty(JS_Value &object, const char *name, JS_Value &prop) {
-  JX_SetNamedProperty((JXValue*)&object, name, (JXValue*)&prop);
+JS_SetNamedProperty(JS_Value *object, const char *name, JS_Value *prop) {
+  JX_SetNamedProperty((JXValue*)object, name, (JXValue*)prop);
 }
 
 NWRAP_EXTERN(void)
-JS_SetIndexedProperty(JS_Value &object, const unsigned index, JS_Value &prop) {
-  JX_SetIndexedProperty((JXValue*)&object, index, (JXValue*)&prop);
+JS_SetIndexedProperty(JS_Value *object, const unsigned index, JS_Value *prop) {
+  JX_SetIndexedProperty((JXValue*)object, index, (JXValue*)prop);
 }
 
 NWRAP_EXTERN(void)
-JS_GetNamedProperty(JS_Value &object, const char *name, JS_Value &out) {
-  JX_GetNamedProperty((JXValue*)&object, name, (JXValue*)&out);
+JS_GetNamedProperty(JS_Value *object, const char *name, JS_Value *out) {
+  JX_GetNamedProperty((JXValue*)object, name, (JXValue*)out);
 }
 
 NWRAP_EXTERN(void)
-JS_GetIndexedProperty(JS_Value &object, const int index, JS_Value &out) {
-  JX_GetIndexedProperty((JXValue*)&object, index, (JXValue*)&out);
+JS_GetIndexedProperty(JS_Value *object, const int index, JS_Value *out) {
+  JX_GetIndexedProperty((JXValue*)object, index, (JXValue*)out);
 }
 
 NWRAP_EXTERN(void)
-JS_GetGlobalObject(JS_Value &out) {
-  JX_GetGlobalObject((JXValue*)&out);
+JS_GetGlobalObject(JS_Value *out) {
+  JX_GetGlobalObject((JXValue*)out);
 }
 
 NWRAP_EXTERN(void)
-JS_GetProcessObject(JS_Value &out) {
-  JX_GetProcessObject((JXValue*)&out);
+JS_GetProcessObject(JS_Value *out) {
+  JX_GetProcessObject((JXValue*)out);
 }
 
 NWRAP_EXTERN(void)
-JS_WrapObject(JS_Value &object, void *ptr) {
-  JX_WrapObject((JXValue*)&object, ptr);
+JS_WrapObject(JS_Value *object, void *ptr) {
+  JX_WrapObject((JXValue*)object, ptr);
 }
 
 NWRAP_EXTERN(void *)
-JS_UnwrapObject(JS_Value &object) {
-  return JX_UnwrapObject((JXValue*)&object);
+JS_UnwrapObject(JS_Value *object) {
+  return JX_UnwrapObject((JXValue*)object);
 }
 
 static bool initialized = false;
@@ -234,13 +234,13 @@ void JS_SetProcessNative(const char *name, JS_CALLBACK callback) {
   }
 }
 
-void JS_SetNativeMethod(JS_Value &value, const char *name,
+void JS_SetNativeMethod(JS_Value *value, const char *name,
                         JS_CALLBACK callback) {
-  return JX_SetNativeMethod((JXValue*)&value, name, (JX_CALLBACK)callback);
+  return JX_SetNativeMethod((JXValue*)value, name, (JX_CALLBACK)callback);
 }
 
-bool JS_Evaluate(const char *data, const char *script_name, JS_Value &jxresult) {
-  return JX_Evaluate(data, script_name, (JXValue*)&jxresult);
+bool JS_Evaluate(const char *data, const char *script_name, JS_Value *jxresult) {
+  return JX_Evaluate(data, script_name, (JXValue*)jxresult);
 }
 
 void JS_DefineMainFile(const char *data) {

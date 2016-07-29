@@ -8,15 +8,16 @@
 
 void sampleMethod(JS_Value *params, int argc) {
   JS_Value obj;
+  JS_New(&obj);
   assert(argc >= 2);
 
-  JS_CreateArrayObject(obj);
-  JS_SetIndexedProperty(obj, 0, params[0]);
-  JS_SetIndexedProperty(obj, 1, params[1]);
+  JS_CreateArrayObject(&obj);
+  JS_SetIndexedProperty(&obj, 0, params + 0);
+  JS_SetIndexedProperty(&obj, 1, params + 1);
 
   // return
-  JS_SetObject(params[argc], obj);
-  JS_Free(obj);
+  JS_SetObject(params + argc, &obj);
+  JS_Free(&obj);
 }
 
 void crashMe(JS_Value *_, int argc) {

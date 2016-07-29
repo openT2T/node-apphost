@@ -8,7 +8,7 @@
 
 void sampleMethod(JS_Value *params, int argc) {
   // returns JS return value(5) back to the caller
-  JS_Evaluate("var z=4;z+1", "test_scope.js", params[argc]);
+  JS_Evaluate("var z=4;z+1", "test_scope.js", params + argc);
 }
 
 void crashMe(JS_Value *_, int argc) {

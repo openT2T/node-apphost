@@ -32,23 +32,23 @@ void ConvertResult(JS_Value &result, std::string &to_result) {
       to_result = "undefined";
       break;
     case RT_Boolean:
-      to_result = JS_GetBoolean(result) ? "true" : "false";
+      to_result = JS_GetBoolean(&result) ? "true" : "false";
       break;
     case RT_Int32: {
       std::stringstream ss;
-      ss << JS_GetInt32(result);
+      ss << JS_GetInt32(&result);
       to_result = ss.str();
     } break;
     case RT_Double: {
       std::stringstream ss;
-      ss << JS_GetDouble(result);
+      ss << JS_GetDouble(&result);
       to_result = ss.str();
     } break;
     case RT_Buffer:
     case RT_Object:
     case RT_Error:
     case RT_String: {
-      char *_ = JS_GetString(result);
+      char *_ = JS_GetString(&result);
       to_result = _;
       free(_);
     } break;

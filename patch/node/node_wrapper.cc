@@ -152,60 +152,60 @@ bool ConvertToJSValue(node::Environment *env, JS_HANDLE_VALUE_REF ret_val,
 }
 
 NWRAP_EXTERN(bool)
-JS_IsFunction(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Function;
+JS_IsFunction(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Function;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsError(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Error;
+JS_IsError(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Error;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsInt32(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Int32;
+JS_IsInt32(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Int32;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsDouble(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Double;
+JS_IsDouble(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Double;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsBoolean(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Boolean;
+JS_IsBoolean(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Boolean;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsString(JS_Value &value) { return value.type_ == RT_String; }
+JS_IsString(JS_Value *value) { return value->type_ == RT_String; }
 
 NWRAP_EXTERN(bool)
-JS_IsJSON(JS_Value &value) { return JS_IsObject(value); }
+JS_IsJSON(JS_Value *value) { return JS_IsObject(value); }
 
 NWRAP_EXTERN(bool)
-JS_IsBuffer(JS_Value &value) {
-  return value.size_ > 0 && value.type_ == RT_Buffer;
+JS_IsBuffer(JS_Value *value) {
+  return value->size_ > 0 && value->type_ == RT_Buffer;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsUndefined(JS_Value &value) { return value.type_ == RT_Undefined; }
+JS_IsUndefined(JS_Value *value) { return value->type_ == RT_Undefined; }
 
 NWRAP_EXTERN(bool)
-JS_IsNull(JS_Value &value) { return value.type_ == RT_Null; }
+JS_IsNull(JS_Value *value) { return value->type_ == RT_Null; }
 
 NWRAP_EXTERN(bool)
-JS_IsNullOrUndefined(JS_Value &value) {
-  return value.type_ == RT_Null || value.type_ == RT_Undefined;
+JS_IsNullOrUndefined(JS_Value *value) {
+  return value->type_ == RT_Null || value->type_ == RT_Undefined;
 }
 
 NWRAP_EXTERN(bool)
-JS_IsObject(JS_Value &value) { return value.type_ == RT_Object; }
+JS_IsObject(JS_Value *value) { return value->type_ == RT_Object; }
 
 NWRAP_EXTERN(int32_t)
-JS_GetInt32(JS_Value &value) {
+JS_GetInt32(JS_Value *value) {
   EMPTY_CHECK(0);
 
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   UNWRAP_COM(value);
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -217,10 +217,10 @@ JS_GetInt32(JS_Value &value) {
 }
 
 NWRAP_EXTERN(double)
-JS_GetDouble(JS_Value &value) {
+JS_GetDouble(JS_Value *value) {
   EMPTY_CHECK(0);
 
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   UNWRAP_COM(value);
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -232,10 +232,10 @@ JS_GetDouble(JS_Value &value) {
 }
 
 NWRAP_EXTERN(bool)
-JS_GetBoolean(JS_Value &value) {
+JS_GetBoolean(JS_Value *value) {
   EMPTY_CHECK(false);
 
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   UNWRAP_COM(value);
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -292,16 +292,16 @@ char *JS_Stringify(node::Environment *env, JS_HANDLE_OBJECT obj,
 }
 
 NWRAP_EXTERN(char *)
-JS_GetString(JS_Value &value) {
+JS_GetString(JS_Value *value) {
   EMPTY_CHECK(0);
 
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   char *ret;
   RUN_IN_SCOPE({
-    switch (value.type_) {
+    switch (value->type_) {
       case RT_String: {
         JS_LOCAL_OBJECT objl = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
         ret = strdup(STRING_TO_STD(JS_VALUE_TO_STRING(objl)));
@@ -345,23 +345,23 @@ JS_GetString(JS_Value &value) {
 }
 
 NWRAP_EXTERN(int32_t)
-JS_GetDataLength(JS_Value &value) {
+JS_GetDataLength(JS_Value *value) {
   EMPTY_CHECK(0);
 
-  return value.size_;
+  return value->size_;
 }
 
 NWRAP_EXTERN(char *)
-JS_GetBuffer(JS_Value &value) {
+JS_GetBuffer(JS_Value *value) {
   EMPTY_CHECK(NULL);
 
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   char *data = NULL;
   RUN_IN_SCOPE({
-    if (value.type_ == RT_Buffer) {
+    if (value->type_ == RT_Buffer) {
       JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
       data = BUFFER__DATA(obj);
     }
@@ -371,49 +371,49 @@ JS_GetBuffer(JS_Value &value) {
 }
 
 NWRAP_EXTERN(void)
-JS_Free(JS_Value &value) {
-  if (value.persistent_) return;
+JS_Free(JS_Value *value) {
+  if (value->persistent_) return;
 
   UNWRAP_COM(value);
 
-  if (value.data_ == NULL || value.type_ == RT_Undefined ||
-      value.type_ == RT_Null)
+  if (value->data_ == NULL || value->type_ == RT_Undefined ||
+      value->type_ == RT_Null)
     return;
 
   RUN_IN_SCOPE({
-    if (value.type_ == RT_Function) {
-      assert(sizeof(JSFunctionWrapper) == value.size_ &&
+    if (value->type_ == RT_Function) {
+      assert(sizeof(JSFunctionWrapper) == value->size_ &&
              "Broken JS_Value Function Object");
 
-      JSFunctionWrapper *wrap = (JSFunctionWrapper *)value.data_;
+      JSFunctionWrapper *wrap = (JSFunctionWrapper *)value->data_;
 
       wrap->Dispose();
       delete (wrap);
     } else {
-      _FREE_MEM_(value.data_);
+      _FREE_MEM_(value->data_);
     }
   });
-  value.data_ = NULL;
-  value.size_ = 0;
-  value.type_ = RT_Undefined;
+  value->data_ = NULL;
+  value->size_ = 0;
+  value->type_ = RT_Undefined;
 }
 
 NWRAP_EXTERN(bool)
-JS_CallFunction(JS_Value &fnc, JS_Value *params, const int argc,
+JS_CallFunction(JS_Value *fnc, JS_Value *params, const int argc,
                 JS_Value *out) {
   UNWRAP_COM(fnc);
 
-  out->com_ = fnc.com_;
+  out->com_ = fnc->com_;
   out->data_ = NULL;
   out->size_ = 0;
   out->type_ = RT_Undefined;
 
-  if (fnc.type_ != RT_Function || env == NULL ||
-      sizeof(JSFunctionWrapper) != fnc.size_) {
+  if (fnc->type_ != RT_Function || env == NULL ||
+      sizeof(JSFunctionWrapper) != fnc->size_) {
     return false;
   }
 
-  JSFunctionWrapper *wrap = (JSFunctionWrapper *)fnc.data_;
+  JSFunctionWrapper *wrap = (JSFunctionWrapper *)fnc->data_;
 
   bool done = false;
   bool ret;
@@ -449,77 +449,77 @@ JS_CallFunction(JS_Value &fnc, JS_Value *params, const int argc,
 }
 
 NWRAP_EXTERN(void)
-JS_SetInt32(JS_Value &value, const int32_t val) {
+JS_SetInt32(JS_Value *value, const int32_t val) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = RT_Int32;
-  value.size_ = sizeof(int32_t);
+  value->type_ = RT_Int32;
+  value->size_ = sizeof(int32_t);
 
   RUN_IN_SCOPE({ JS_NEW_PERSISTENT_VALUE(wrap->value_, STD_TO_INTEGER(val)); });
 }
 
 NWRAP_EXTERN(void)
-JS_SetDouble(JS_Value &value, const double val) {
+JS_SetDouble(JS_Value *value, const double val) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = RT_Double;
-  value.size_ = sizeof(double);
+  value->type_ = RT_Double;
+  value->size_ = sizeof(double);
 
   RUN_IN_SCOPE({ JS_NEW_PERSISTENT_VALUE(wrap->value_, STD_TO_NUMBER(val)); });
 }
 
 NWRAP_EXTERN(void)
-JS_SetBoolean(JS_Value &value, const bool val) {
+JS_SetBoolean(JS_Value *value, const bool val) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = RT_Boolean;
-  value.size_ = sizeof(bool);
+  value->type_ = RT_Boolean;
+  value->size_ = sizeof(bool);
 
   RUN_IN_SCOPE({ JS_NEW_PERSISTENT_VALUE(wrap->value_, STD_TO_BOOLEAN(val)); });
 }
 
-inline void SetString(JS_ValueType valueType, JS_Value &value, const char *val,
+inline void SetString(JS_ValueType valueType, JS_Value *value, const char *val,
                       const int32_t length) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == 0) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = valueType;
-  value.size_ = length;
+  value->type_ = valueType;
+  value->size_ = length;
 
   RUN_IN_SCOPE({
     JS_LOCAL_STRING str_val = UTF8_TO_STRING(val);
@@ -528,25 +528,25 @@ inline void SetString(JS_ValueType valueType, JS_Value &value, const char *val,
 }
 
 NWRAP_EXTERN(void)
-JS_SetString(JS_Value &value, const char *val, const int32_t length) {
+JS_SetString(JS_Value *value, const char *val, const int32_t length) {
   SetString(RT_String, value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetJSON(JS_Value &value, const char *val, const int32_t length) {
+JS_SetJSON(JS_Value *value, const char *val, const int32_t length) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = RT_Object;
-  value.size_ = length == 0 ? strlen(val) : length;
+  value->type_ = RT_Object;
+  value->size_ = length == 0 ? strlen(val) : length;
 
   RUN_IN_SCOPE({
     JS_HANDLE_VALUE hval = JS_Parse(env, val);
@@ -555,26 +555,26 @@ JS_SetJSON(JS_Value &value, const char *val, const int32_t length) {
 }
 
 NWRAP_EXTERN(void)
-JS_SetError(JS_Value &value, const char *val, const int32_t length) {
+JS_SetError(JS_Value *value, const char *val, const int32_t length) {
   // todo: create an error object
   SetString(RT_Error, value, val, length);
 }
 
 NWRAP_EXTERN(void)
-JS_SetBuffer(JS_Value &value, const char *val, const int32_t length) {
+JS_SetBuffer(JS_Value *value, const char *val, const int32_t length) {
   UNWRAP_COM(value);
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value.data_ = (void *)wrap;
+    value->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value.type_ = RT_Buffer;
-  value.size_ = (length == 0 && val != NULL) ? strlen(val) : length;
+  value->type_ = RT_Buffer;
+  value->size_ = (length == 0 && val != NULL) ? strlen(val) : length;
 
   RUN_IN_SCOPE({
     char *data = strdup(val);
@@ -585,133 +585,133 @@ JS_SetBuffer(JS_Value &value, const char *val, const int32_t length) {
 }
 
 NWRAP_EXTERN(void)
-JS_SetUndefined(JS_Value &value) { value.type_ = RT_Undefined; }
+JS_SetUndefined(JS_Value *value) { value->type_ = RT_Undefined; }
 
 NWRAP_EXTERN(void)
-JS_SetNull(JS_Value &value) { value.type_ = RT_Null; }
+JS_SetNull(JS_Value *value) { value->type_ = RT_Null; }
 
 NWRAP_EXTERN(void)
-JS_SetObject(JS_Value &value_to, JS_Value &value_from) {
+JS_SetObject(JS_Value *value_to, JS_Value *value_from) {
   UNWRAP_COM(value_to);
-  UNWRAP_RESULT(value_to.data_);
+  UNWRAP_RESULT(value_to->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(value_from.type_ == RT_Object && "value_from must be an Object");
+  assert(value_from->type_ == RT_Object && "value_from must be an Object");
 
   if (wrap == NULL) {
     wrap = new JSValueWrapper();
-    value_to.data_ = (void *)wrap;
+    value_to->data_ = (void *)wrap;
   } else if (!JS_IS_EMPTY(wrap->value_)) {
     JS_CLEAR_PERSISTENT(wrap->value_);
   }
 
-  value_to.type_ = RT_Object;
-  value_to.size_ = 1;
+  value_to->type_ = RT_Object;
+  value_to->size_ = 1;
 
-  JSValueWrapper *wrap_from = (JSValueWrapper *)value_from.data_;
+  JSValueWrapper *wrap_from = (JSValueWrapper *)value_from->data_;
   RUN_IN_SCOPE({ JS_NEW_PERSISTENT_VALUE(wrap->value_, wrap_from->value_); });
-  value_to.persistent_ = false;
+  value_to->persistent_ = false;
 }
 
 NWRAP_EXTERN(bool)
-JS_MakePersistent(JS_Value &value) {
-  assert(value.com_ != NULL && value.type_ != RT_Undefined &&
-         value.type_ != RT_Null &&
+JS_MakePersistent(JS_Value *value) {
+  assert(value->com_ != NULL && value->type_ != RT_Undefined &&
+         value->type_ != RT_Null &&
          "Empty, Null or Undefined JS Value can not be persistent");
 
-  bool pre = value.persistent_;
-  value.persistent_ = true;
+  bool pre = value->persistent_;
+  value->persistent_ = true;
 
   return !pre;
 }
 
 NWRAP_EXTERN(bool)
-JS_ClearPersistent(JS_Value &value) {
-  assert(value.com_ != NULL && value.type_ != RT_Undefined &&
-         value.type_ != RT_Null &&
+JS_ClearPersistent(JS_Value *value) {
+  assert(value->com_ != NULL && value->type_ != RT_Undefined &&
+         value->type_ != RT_Null &&
          "Empty, Null or Undefined JS Value can not be persistent");
 
-  bool pre = value.persistent_;
-  value.persistent_ = false;
+  bool pre = value->persistent_;
+  value->persistent_ = false;
 
   return pre;
 }
 
 #define SET_UNDEFINED(to_)  \
-  to_.type_ = RT_Undefined; \
-  to_.data_ = NULL;         \
-  to_.size_ = 0
+  to_->type_ = RT_Undefined; \
+  to_->data_ = NULL;         \
+  to_->size_ = 0
 
 NWRAP_EXTERN(bool)
-JS_New(JS_Value &value) {
+JS_New(JS_Value *value) {
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
 
-  value.com_ = env;
-  value.persistent_ = false;
+  value->com_ = env;
+  value->persistent_ = false;
   SET_UNDEFINED(value);
 
   return true;
 }
 
 NWRAP_EXTERN(bool)
-JS_CreateEmptyObject(JS_Value &value) {
+JS_CreateEmptyObject(JS_Value *value) {
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
 
   if (env == NULL) return false;
   JS_DEFINE_STATE_MARKER(env);
 
-  value.com_ = env;
+  value->com_ = env;
 
   JSValueWrapper *wrap = new JSValueWrapper();
   ScopeWatch watcher(env->isolate());
 
   RUN_IN_SCOPE(
       { JS_NEW_PERSISTENT_OBJECT(wrap->value_, JS_NEW_EMPTY_OBJECT()); });
-  value.data_ = wrap;
+  value->data_ = wrap;
 
-  value.size_ = 1;
-  value.persistent_ = false;
-  value.type_ = RT_Object;
+  value->size_ = 1;
+  value->persistent_ = false;
+  value->type_ = RT_Object;
 
   return true;
 }
 
 NWRAP_EXTERN(bool)
-JS_CreateArrayObject(JS_Value &value) {
+JS_CreateArrayObject(JS_Value *value) {
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
 
   if (env == NULL) return false;
   JS_DEFINE_STATE_MARKER(env);
 
-  value.com_ = env;
+  value->com_ = env;
   ScopeWatch watcher(env->isolate());
   JSValueWrapper *wrap = new JSValueWrapper();
   RUN_IN_SCOPE({ JS_NEW_PERSISTENT_OBJECT(wrap->value_, JS_NEW_ARRAY()); });
 
-  value.data_ = wrap;
-  value.size_ = 1;
-  value.persistent_ = false;
-  value.type_ = RT_Object;
+  value->data_ = wrap;
+  value->size_ = 1;
+  value->persistent_ = false;
+  value->type_ = RT_Object;
 
   return true;
 }
 
 NWRAP_EXTERN(void)
-JS_SetNamedProperty(JS_Value &object, const char *name, JS_Value &prop) {
+JS_SetNamedProperty(JS_Value *object, const char *name, JS_Value *prop) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   JSValueWrapper *wrap_prop = NULL;
 
-  if (prop.type_ != RT_Undefined && prop.type_ != RT_Null &&
-      prop.data_ != NULL) {
-    wrap_prop = (JSValueWrapper *)prop.data_;
+  if (prop->type_ != RT_Undefined && prop->type_ != RT_Null &&
+      prop->data_ != NULL) {
+    wrap_prop = (JSValueWrapper *)prop->data_;
   }
 
   RUN_IN_SCOPE({
@@ -724,18 +724,18 @@ JS_SetNamedProperty(JS_Value &object, const char *name, JS_Value &prop) {
 }
 
 NWRAP_EXTERN(void)
-JS_SetIndexedProperty(JS_Value &object, const unsigned index, JS_Value &prop) {
+JS_SetIndexedProperty(JS_Value *object, const unsigned index, JS_Value *prop) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   JSValueWrapper *wrap_prop = NULL;
 
-  if (prop.type_ != RT_Undefined && prop.type_ != RT_Null &&
-      prop.data_ != NULL) {
-    wrap_prop = (JSValueWrapper *)prop.data_;
+  if (prop->type_ != RT_Undefined && prop->type_ != RT_Null &&
+      prop->data_ != NULL) {
+    wrap_prop = (JSValueWrapper *)prop->data_;
   }
 
   RUN_IN_SCOPE({
@@ -748,12 +748,12 @@ JS_SetIndexedProperty(JS_Value &object, const unsigned index, JS_Value &prop) {
 }
 
 NWRAP_EXTERN(void)
-JS_GetNamedProperty(JS_Value &object, const char *name, JS_Value &out) {
+JS_GetNamedProperty(JS_Value *object, const char *name, JS_Value *out) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
@@ -763,39 +763,39 @@ JS_GetNamedProperty(JS_Value &object, const char *name, JS_Value &out) {
     else
       sub_obj = JS_UNDEFINED();
 
-    out.data_ = NULL;
-    out.size_ = 0;
-    out.com_ = env;
-    out.persistent_ = false;
-    ConvertToJSValue(env, sub_obj, &out);
+    out->data_ = NULL;
+    out->size_ = 0;
+    out->com_ = env;
+    out->persistent_ = false;
+    ConvertToJSValue(env, sub_obj, out);
   });
 }
 
 NWRAP_EXTERN(void)
-JS_GetIndexedProperty(JS_Value &object, const int index, JS_Value &out) {
+JS_GetIndexedProperty(JS_Value *object, const int index, JS_Value *out) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
     JS_LOCAL_VALUE sub_obj = JS_GET_INDEX(obj, index);
 
-    out.data_ = NULL;
-    out.size_ = 0;
-    out.com_ = env;
-    out.persistent_ = false;
-    ConvertToJSValue(env, sub_obj, &out);
+    out->data_ = NULL;
+    out->size_ = 0;
+    out->com_ = env;
+    out->persistent_ = false;
+    ConvertToJSValue(env, sub_obj, out);
   });
 }
 
 NWRAP_EXTERN(int)
-JS_GetThreadIdByValue(JS_Value &value) { return 0; }
+JS_GetThreadIdByValue(JS_Value *value) { return 0; }
 
 NWRAP_EXTERN(void)
-JS_GetGlobalObject(JS_Value &out) {
+JS_GetGlobalObject(JS_Value *out) {
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -805,16 +805,16 @@ JS_GetGlobalObject(JS_Value &out) {
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_GET_GLOBAL();
 
-    out.data_ = NULL;
-    out.size_ = 0;
-    out.com_ = env;
-    out.persistent_ = false;
-    ConvertToJSValue(env, obj, &out);
+    out->data_ = NULL;
+    out->size_ = 0;
+    out->com_ = env;
+    out->persistent_ = false;
+    ConvertToJSValue(env, obj, out);
   });
 }
 
 NWRAP_EXTERN(void)
-JS_GetProcessObject(JS_Value &out) {
+JS_GetProcessObject(JS_Value *out) {
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -824,21 +824,21 @@ JS_GetProcessObject(JS_Value &out) {
   RUN_IN_SCOPE({
     JS_HANDLE_OBJECT obj = env->process_object();
 
-    out.data_ = NULL;
-    out.size_ = 0;
-    out.com_ = env;
-    out.persistent_ = false;
-    ConvertToJSValue(env, obj, &out);
+    out->data_ = NULL;
+    out->size_ = 0;
+    out->com_ = env;
+    out->persistent_ = false;
+    ConvertToJSValue(env, obj, out);
   });
 }
 
 NWRAP_EXTERN(void)
-JS_WrapObject(JS_Value &object, void *ptr) {
+JS_WrapObject(JS_Value *object, void *ptr) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
@@ -848,12 +848,12 @@ JS_WrapObject(JS_Value &object, void *ptr) {
 }
 
 NWRAP_EXTERN(void *)
-JS_UnwrapObject(JS_Value &object) {
+JS_UnwrapObject(JS_Value *object) {
   UNWRAP_COM(object);
-  UNWRAP_RESULT(object.data_);
+  UNWRAP_RESULT(object->data_);
   assert(env && "Did you call JS_StartEngine ?");
 
-  assert(object.type_ == RT_Object && "object must be an Object");
+  assert(object->type_ == RT_Object && "object must be an Object");
 
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
@@ -912,7 +912,7 @@ JS_LOCAL_METHOD(extensionCallback) {
   callbacks[interface_id].callback(results, len);
 
   for (int i = 0; i < len; i++) {
-    JS_Free(results[i]);
+    JS_Free(results + i);
   }
 
   if (results[len].type_ != RT_Undefined) {
@@ -924,10 +924,10 @@ JS_LOCAL_METHOD(extensionCallback) {
            "Return value was corrupted");
 
     if (results[len].type_ == RT_Error) {
-      char *cmsg = JS_GetString(results[len]);
+      char *cmsg = JS_GetString(results + len);
       std::string msg = cmsg;
       free(cmsg);
-      JS_Free(results[len]);
+      JS_Free(results + len);
       THROW_EXCEPTION(msg.c_str());
     } else if (results[len].type_ == RT_Function) {
       assert(sizeof(JSFunctionWrapper) == results[len].size_ &&
@@ -935,17 +935,17 @@ JS_LOCAL_METHOD(extensionCallback) {
 
       JSFunctionWrapper *fnc_wrap = (JSFunctionWrapper *)results[len].data_;
       JS_HANDLE_FUNCTION fnc = fnc_wrap->GetFunction();
-      JS_Free(results[len]);
+      JS_Free(results + len);
 
       RETURN_PARAM(fnc);
     } else if (results[len].type_ == RT_Null) {
-      JS_Free(results[len]);
+      JS_Free(results + len);
       RETURN_PARAM(JS_NULL());
     }
 
     JSValueWrapper *wrap = (JSValueWrapper *)results[len].data_;
     JS_HANDLE_VALUE ret_val = JS_TYPE_TO_LOCAL_VALUE(wrap->value_);
-    JS_Free(results[len]);
+    JS_Free(results + len);
     RETURN_PARAM(ret_val);
   }
 
@@ -1003,7 +1003,7 @@ void DefineProxyMethod(JS_HANDLE_OBJECT obj, const char *name,
   DeclareProxy(env, natives, name, interface_id, method);
 }
 
-void JS_SetNativeMethod(JS_Value &value, const char *name,
+void JS_SetNativeMethod(JS_Value *value, const char *name,
                         JS_CALLBACK callback) {
   int id = extension_id++;
   assert(id < MAX_CALLBACK_ID &&
@@ -1011,7 +1011,7 @@ void JS_SetNativeMethod(JS_Value &value, const char *name,
   callbacks[id].callback = callback;
   callbacks[id].name = strdup(name);
 
-  UNWRAP_RESULT(value.data_);
+  UNWRAP_RESULT(value->data_);
   UNWRAP_COM(value);
   assert(env && "Did you call JS_StartEngine ?");
 
@@ -1054,19 +1054,19 @@ void JS_SetProcessNative(const char *name, JS_CALLBACK callback) {
   JS_SetProcessNativeInternal(id, name, callback);
 }
 
-#define MANAGE_EXCEPTION                             \
-  JS_LOCAL_VALUE exception = try_catch.Exception();  \
-  result.type_ = RT_Error;                           \
-  result.data_ = new JSValueWrapper(env, exception); \
-  result.size_ = 1;                                  \
+#define MANAGE_EXCEPTION                              \
+  JS_LOCAL_VALUE exception = try_catch.Exception();   \
+  result->type_ = RT_Error;                           \
+  result->data_ = new JSValueWrapper(env, exception); \
+  result->size_ = 1;                                  \
   return true;
 
-bool Evaluate(const char *source, const char *filename, JS_Value &result) {
+bool Evaluate(const char *source, const char *filename, JS_Value *result) {
   node::Environment *env = node::__GetNodeEnvironment();
   JS_DEFINE_STATE_MARKER(env);
 
   SET_UNDEFINED(result);
-  result.com_ = env;
+  result->com_ = env;
 
   JS_LOCAL_STRING source_ = UTF8_TO_STRING(source);
   JS_LOCAL_STRING filename_ = UTF8_TO_STRING(filename);
@@ -1085,10 +1085,10 @@ bool Evaluate(const char *source, const char *filename, JS_Value &result) {
     MANAGE_EXCEPTION
   }
 
-  return ConvertToJSValue(env, scr_return, &result);
+  return ConvertToJSValue(env, scr_return, result);
 }
 
-bool JS_Evaluate(const char *data, const char *script_name, JS_Value &out) {
+bool JS_Evaluate(const char *data, const char *script_name, JS_Value *out) {
   const char *name = script_name == NULL ? "JS_Evaluate" : script_name;
   node::Environment *env = node::__GetNodeEnvironment();
   assert(env && "Did you call JS_StartEngine ?");
@@ -1146,7 +1146,7 @@ void JS_StartEngine(const char* home_folder) {
     copy_argv[home_length + 12] = '\0';
     app_args[1] = copy_argv + home_length + 5;
   }
-  
+
   app_args[0] = copy_argv;
 
   // At this moment we will be in initial scope
@@ -1165,7 +1165,7 @@ void JS_QuitLoop() {
 }
 
 bool JS_IsV8() {
-#ifndef JS_ENGINE_CHAKRA
+#ifndef NODE_ENGINE_CHAKRACORE
   return true;
 #else
   return false;
@@ -1175,7 +1175,7 @@ bool JS_IsV8() {
 bool JS_IsSpiderMonkey() { return false; }
 
 bool JS_IsChakra() {
-#ifdef JS_ENGINE_CHAKRA
+#ifdef NODE_ENGINE_CHAKRACORE
   return true;
 #else
   return false;

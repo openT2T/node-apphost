@@ -20,11 +20,11 @@ void sampleMethod(JS_Value *results, int argc) {
   }
 
   JS_Value out;
-  JS_CallFunction(results[9], (results + 3), 2, &out);
+  JS_CallFunction(results + 9, (results + 3), 2, &out);
 
-  assert(JS_GetDataLength(out) == 11 &&
+  assert(JS_GetDataLength(&out) == 11 &&
          "Expected return value was 'test{\"a\":3}");
-  JS_Free(out);
+  JS_Free(&out);
   assert(out.data_ == NULL && out.size_ == 0 && "JS_FreeResultData leaks?");
 }
 
@@ -42,6 +42,6 @@ int main(int argc, char **args) {
   while (JS_LoopOnce() != 0) usleep(1);
 
   JS_StopEngine();
-  
+
   return 0;
 }

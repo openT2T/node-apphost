@@ -13,16 +13,16 @@ int main(int argc, char **args) {
   while (JS_LoopOnce() != 0) usleep(1);
 
   JS_Value process;
-  JS_GetProcessObject(process);
+  JS_GetProcessObject(&process);
 
   JS_Value obj;
-  JS_CreateEmptyObject(obj);
-  JS_SetNamedProperty(obj, "process", process);
+  JS_CreateEmptyObject(&obj);
+  JS_SetNamedProperty(&obj, "process", &process);
 
   JS_Value val;
-  JS_GetNamedProperty(obj, "process", val);
+  JS_GetNamedProperty(&obj, "process", &val);
 
-  assert(!JS_IsUndefined(val));
-  JS_Free(obj);
+  assert(!JS_IsUndefined(&val));
+  JS_Free(&obj);
   JS_StopEngine();
 }
