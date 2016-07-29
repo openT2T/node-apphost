@@ -19,5 +19,6 @@ Release/
 *.ilk
 *.pdb
 current.vcxproj
+current.sln
 winproj/test_app/test.cpp
 out/

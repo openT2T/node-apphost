@@ -40,6 +40,11 @@ if (args.hasOwnProperty('--help')) {
     file = file.replace("$NODE_DISTRO$", (args['--target'] == 'jxcore' ? 'jx' : 'node'));
     file = file.replace(/\$ARCH\$/g, getARCH());
     fs.writeFileSync(path.join(path.dirname(proj_file), "current.vcxproj"), file);
+
+    proj_file = path.join(__dirname, "../winproj/test_app/");
+    file = fs.readFileSync(proj_file + "test_app.sln") + "";
+    file = file.replace(/\$ARCH\$/g, getARCH());
+    fs.writeFileSync(proj_file + "current.sln", file);
   }
 }
 
@@ -78,7 +83,7 @@ function build() {
   } else {
     return "cd " + root_folder + "\\winproj\\test_app\n"
          + "copy ..\\..\\tests\\$$TARGET_TEST\\test.cpp .\n"
-         + "msbuild /m /nologo current.vcxproj\n"
+         + "msbuild /m /nologo current.sln\n"
          + "if %errorlevel% NEQ 0 exit 1\n"
          + "copy *.dll Debug\\\n"
          + "cd Debug\n"
