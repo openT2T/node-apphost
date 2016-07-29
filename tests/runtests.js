@@ -77,8 +77,7 @@ function build() {
          + "copy ..\\..\\tests\\$$TARGET_TEST\\test.cpp .\n"
          + "msbuild /m /nologo current.sln\n"
          + "if %errorlevel% NEQ 0 exit 1\n"
-         + "copy " + (args['--target'] == 'jxcore' ? 'jx' : 'node')
-         + ".dll Debug\\\n"
+         + "copy *.dll Debug\\\n"
          + "cd Debug\n"
          + "echo *********** RUNNING $$TARGET_TEST *************"
          + "\ncurrent.exe"

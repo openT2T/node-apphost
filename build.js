@@ -135,7 +135,6 @@ var createBatch = function() {
     fs.writeFileSync('./temp/clean.bat', 'cd %1\ngit checkout -f');
     fs.writeFileSync('./temp/copy.bat',  ('del $TAPP*.lib \n'
                                        + 'del $TAPP*.dll \n'
-                                       + 'del $TAPP*.exe \n'
                                        + 'copy $$TARGET\\$$MODE\\*.lib $TAPP\n'
                                        + 'copy $$TARGET\\$$MODE\\*.dll $TAPP\n')
                                        .replace(/\$\$MODE/g, release ? "Release" : "Debug")
@@ -145,7 +144,8 @@ var createBatch = function() {
     fs.writeFileSync('./temp/clean.bat', 'cd $1;git checkout -f');
   }
 
-  var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : "master";
+  var node_base = (setup.node_url.indexOf('node-chakracore') > 0 ? 'chakracore-master' : 'master');
+  var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : node_base;
   var br_jxcore = args.hasOwnProperty('--cid_jxcore') ? args['--cid_jxcore'] : "master";
   fs.writeFileSync('./temp/checkout_node.bat', taskman.checkout('nodejs', br_node));
   fs.writeFileSync('./temp/checkout_jxcore.bat', taskman.checkout('jxcore', br_jxcore));
@@ -169,31 +169,33 @@ var createBatch = function() {
   }
 }
 
-var setup = function() {
-  var node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node');
+var setup = function(set_url_only) {
+  setup.node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node');
   if (args.hasOwnProperty('--url_node')) {
-    node_url = args['--url_node'];
+    setup.node_url = args['--url_node'];
   }
 
-  var jxcore_url = 'https://github.com/jxcore/jxcore';
+  setup.jxcore_url = 'https://github.com/jxcore/jxcore';
   if (args.hasOwnProperty('--url_jxcore')) {
-    jxcore_url = args['--url_jxcore'];
+    setup.jxcore_url = args['--url_jxcore'];
   }
-
-  taskman.tasker = [
-    [taskman.rmdir('nodejs'), "deleting nodejs folder"],
-    [taskman.rmdir('jxcore'), "deleting jxcore folder"],
-    [taskman.clone(node_url, 'nodejs'), "cloning nodejs"],
-    [taskman.clone(jxcore_url, 'jxcore'), "cloning jxcore"],
-    [path.join(__dirname, 'temp/checkout_node.bat'), "checkout nodejs branch"],
-    [path.join(__dirname, 'temp/checkout_jxcore.bat'), "checkout jxcore branch"]
-  ];
+  if (!set_url_only) {
+    taskman.tasker = [
+      [taskman.rmdir('nodejs'), "deleting nodejs folder"],
+      [taskman.rmdir('jxcore'), "deleting jxcore folder"],
+      [taskman.clone(setup.node_url, 'nodejs'), "cloning nodejs"],
+      [taskman.clone(setup.jxcore_url, 'jxcore'), "cloning jxcore"],
+      [path.join(__dirname, 'temp/checkout_node.bat'), "checkout nodejs branch"],
+      [path.join(__dirname, 'temp/checkout_jxcore.bat'), "checkout jxcore branch"]
+    ];
+  }
 };
 
 if (args.hasOwnProperty('--reset') || !fs.existsSync(path.resolve('nodejs'))) {
   console.log("Setting Up! [ This will take some time.. ]");
-  setup();
+  setup(false);
 } else {
+  setup(true);
   taskman.tasker = [
     [stash('nodejs'), "resetting nodejs folder"],
     [stash('jxcore'), "resetting jxcore folder"]
