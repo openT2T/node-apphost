@@ -38,7 +38,7 @@ if (args.hasOwnProperty('--help')) {
     var proj_file = path.join(__dirname, "../winproj/test_app/test_app.vcxproj");
     var file = fs.readFileSync(proj_file) + "";
     file = file.replace("$NODE_DISTRO$", (args['--target'] == 'jxcore' ? 'jx' : 'node'));
-    file = file.replace(/\$TARGET_ARCH/g, getARCH());
+    file = file.replace(/\$ARCH\$/g, getARCH());
     fs.writeFileSync(path.join(path.dirname(proj_file), "current.vcxproj"), file);
   }
 }
@@ -51,7 +51,10 @@ function getARCH() {
 
     return '-m32';
   } else {
-    console.log("IMPLEMENT ME (getARCH) WINDOWS");
+    if (arch == 'ia32' || arch == 'x86') return 'Win32'
+    if (arch == 'x64' || arch == 'x86_64' || arch == 'amd64') return 'x64'
+
+    return 'Win32';
   }
 }
 
@@ -75,7 +78,7 @@ function build() {
   } else {
     return "cd " + root_folder + "\\winproj\\test_app\n"
          + "copy ..\\..\\tests\\$$TARGET_TEST\\test.cpp .\n"
-         + "msbuild /m /nologo current.sln\n"
+         + "msbuild /m /nologo current.vcxproj\n"
          + "if %errorlevel% NEQ 0 exit 1\n"
          + "copy *.dll Debug\\\n"
          + "cd Debug\n"

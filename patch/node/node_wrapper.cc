@@ -27,16 +27,21 @@ class ScopeWatch {
   bool EnteredNewScope() { return entered_; }
 
   void EnterScope() {
+#ifndef NODE_ENGINE_CHAKRACORE
     if (!in_scope_faked_)
       isolate_->Enter();
+#endif
+
     entered_ = true;
     in_scope_ = true;
   }
 
   ~ScopeWatch() {
     if (entered_) {
+#ifndef NODE_ENGINE_CHAKRACORE
       if (!in_scope_faked_)
         isolate_->Exit();
+#endif
       in_scope_ = false;
     }
   }
@@ -1143,6 +1148,10 @@ void JS_StartEngine(const char* home_folder) {
   }
   
   app_args[0] = copy_argv;
+
+  // At this moment we will be in initial scope
+  // so, we should keep watcher forcing into an additonal watch
+  ScopeWatch watcher(nullptr, true);
   node::__Start(2, app_args, DEFINE_NATIVES__);
 
   JS_LoopOnce();

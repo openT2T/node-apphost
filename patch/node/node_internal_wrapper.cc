@@ -33,11 +33,18 @@ void __StartNodeInstance(void* arg, void (*DEFINE_NATIVES)()) {
     Locker locker(isolate);
     Isolate::Scope isolate_scope(isolate);
     HandleScope handle_scope(isolate);
+#ifndef NODE_ENGINE_CHAKRACORE
     node_isolate_data =
         new IsolateData(isolate, instance_data->event_loop(),
                         array_buffer_allocator.zero_fill_field());
+#endif
     Local<Context> context = Context::New(isolate);
     Context::Scope context_scope(context);
+#if defined(NODE_ENGINE_CHAKRACORE)
+      node_isolate_data =
+          new IsolateData(isolate, instance_data->event_loop(),
+                          array_buffer_allocator.zero_fill_field());
+#endif
     node_env = new Environment(node_isolate_data, context);
     node_env->Start(instance_data->argc(), instance_data->argv(),
                     instance_data->exec_argc(), instance_data->exec_argv(),
