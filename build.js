@@ -60,7 +60,7 @@ function createScript() {
               + "if [ $? != 0 ]; then\n"
               + "  exit 1\n"
               + "fi\n"
-              + "build_scripts/android_compile.sh " + args["--ndk-path"] + "\n"
+              + "build_scripts/android_compile.sh " + args["--ndk-path"] + " --embed-leveldown\n"
               + "if [ $? != 0 ]; then\n"
               + "  exit 1\n"
               + "fi\n";

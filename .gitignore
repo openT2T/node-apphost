@@ -27,3 +27,23 @@ out/
 *.pbxuser
 .DS_Store
 build/
+.gradle
+samples/android/libs
+samples/android/JNI_JXCORE/libs
+samples/android/JNI_JXCORE/bin
+
+# Non-project-specific build files:
+build.xml
+local.properties
+/gradlew
+/gradlew.bat
+/gradle
+# Ant builds
+ant-build
+ant-gen
+# Eclipse builds
+gen
+out
+.settings/
+# Gradle builds
+/build
