@@ -105,7 +105,8 @@ var tests = [
   "new_value",
   "raise-unhandled",
   "scope-test",
-  "stringify-object"
+  "stringify-object",
+  "test-wrap"
 ];
 
 // find visual studio environment batch file and execute
@@ -113,7 +114,7 @@ var tests = [
 var script = ""
 
 if (isWindows) {
-  script +=  
+  script +=
       "@echo off"
     + "\nset target_env=vc2015"
     + "\n@rem Set environment for msbuild"

@@ -855,14 +855,13 @@ JS_UnwrapObject(JS_Value *object) {
 
   assert(object->type_ == RT_Object && "object must be an Object");
 
+  void *data = NULL;
   RUN_IN_SCOPE({
     JS_LOCAL_OBJECT obj = JS_OBJECT_FROM_PERSISTENT(wrap->value_);
-
-    return JS_GET_POINTER_DATA(obj);
+    JS_GET_POINTER_DATA(data, obj);
   });
 
-  // make compiler happy
-  return NULL;
+  return data;
 }
 
 // allocates one extra JS_Value memory at the end of the array

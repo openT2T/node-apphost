@@ -128,12 +128,6 @@ typedef void (*JS_NATIVE_METHOD)(const JS_V8_ARGUMENT &args);
 
 #define BOOLEAN_TO_STD(x) (x)->BooleanValue()
 #define NUMBER_TO_STD(x) (x)->NumberValue()
-
-#define JS_HAS_NAME(x, y) (x)->Has(y)
-#define JS_GET_INDEX(x, y) (x)->Get((uint32_t)y)
-#define JS_GET_NAME(x, y) (x)->Get(y)
-#define JS_GET_NAME_HIDDEN(x, y) (x)->GetHiddenValue(y)
-#define JS_GET_FUNCTION(x) (x)->GetFunction()
 #define JS_GET_CONSTRUCTOR(x) (x)->GetFunction()
 
 #define JS_IS_EMPTY(x) (x).IsEmpty()
@@ -298,12 +292,42 @@ inline static JS_HANDLE_STRING ___STD_TO_STRING(v8::Isolate *__contextORisolate,
 #define JS_HAS_NAME(x, y) (x)->Has(y)
 #define JS_GET_INDEX(x, y) (x)->Get((uint32_t)y)
 #define JS_GET_NAME(x, y) (x)->Get(y)
-#define JS_GET_NAME_HIDDEN(x, y) (x)->GetHiddenValue(y)
 #define JS_GET_FUNCTION(x) (x)->GetFunction()
 
-#define JS_SET_POINTER_DATA(host, data) \
-  host->SetAlignedPointerInInternalField(0, data)
-#define JS_GET_POINTER_DATA(host) host->GetAlignedPointerFromInternalField(0)
+// todo: hide this property ?
+#define NODE_INTERNAL_WRAPPER_FIELD_NAME "______node_wrapper_internal"
+#define JS_SET_POINTER_DATA(host, data)                                           \
+  {                                                                               \
+    if (host->InternalFieldCount() == 0) {                                        \
+      JS_LOCAL_STRING if_string= STD_TO_STRING(NODE_INTERNAL_WRAPPER_FIELD_NAME); \
+      JS_LOCAL_OBJECT if_object;                                                  \
+      if (!JS_HAS_NAME(host, if_string)) {                                        \
+        if_object = env->NewInternalFieldObject();                                \
+        JS_NAME_SET(host, if_string, if_object);                                  \
+      } else {                                                                    \
+        if_object = JS_VALUE_TO_OBJECT(JS_GET_NAME(host, if_string));             \
+      }                                                                           \
+      if_object->SetAlignedPointerInInternalField(0, data);                       \
+    } else {                                                                      \
+      host->SetAlignedPointerInInternalField(0, data);                            \
+    }                                                                             \
+  }
+
+#define JS_GET_POINTER_DATA(ptr, host)                                            \
+  {                                                                               \
+    if (host->InternalFieldCount() == 0) {                                        \
+      JS_LOCAL_STRING if_string= STD_TO_STRING(NODE_INTERNAL_WRAPPER_FIELD_NAME); \
+      if (!JS_HAS_NAME(host, if_string)) {                                        \
+        ptr = nullptr;                                                            \
+      } else {                                                                    \
+        JS_LOCAL_OBJECT                                                           \
+                    if_object = JS_VALUE_TO_OBJECT(JS_GET_NAME(host, if_string)); \
+        ptr = if_object->GetAlignedPointerFromInternalField(0);                   \
+      }                                                                           \
+    } else {                                                                      \
+      ptr = host->GetAlignedPointerFromInternalField(0);                          \
+    }                                                                             \
+  }
 
 #define JS_METHOD(method_name)                                \
   void method_name(const JS_V8_ARGUMENT &args) {              \
