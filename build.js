@@ -100,7 +100,7 @@ function createScript() {
 
     var batch = "";
     if (forced_target == 'jxcore')
-      batch += 'cd jxcore\nvcbuild.bat ia32 --shared-library ';
+      batch += 'cd jxcore\nvcbuild.bat --shared-library ' + cpu + ' ';
     else {
       forced_target = 'nodejs';
       batch += 'cd nodejs\nvcbuild.bat chakracore nosign ' + cpu + ' ';
