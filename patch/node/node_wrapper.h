@@ -50,7 +50,6 @@ struct _JSValue {
 };
 
 typedef struct _JSValue JS_Value;
-typedef struct _JSValue JS_Result;
 
 // Call a JS side function.
 // fnc: Function
