@@ -109,9 +109,9 @@ function createScript() {
     } 
 
     var releaseType = (release ? 'release' : 'debug');
-    var logFileName = 'buildlog_' + cpu + '_' + releaseType + '.log';
+    var logFileName = 'buildlog_' + cpu + '.log';
     console.log('Build log file : ' + logFileName);
-    batch += releaseType + ' > ' + logFileName + '\n'
+    batch += releaseType + ' > ' + releaseType + '\\' + logFileName + '\n'
           + 'set EXIT_CODE=%errorlevel%\n'
           + 'cd ..\n'
           + 'exit /b %EXIT_CODE%\n';
