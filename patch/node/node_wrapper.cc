@@ -876,13 +876,13 @@ JS_UnwrapObject(JS_Value *object) {
       results[i].com_ = context;                                \
       results[i].data_ = NULL;                                  \
       results[i].size_ = 0;                                     \
-      results[i].type_ = RT_Undefined;                          \
+      results[i].type_ = JS_ValueType::RT_Undefined;                          \
       ConvertToJSValue(env, val, &results[i]);                  \
     }                                                           \
     results[len].com_ = context;                                \
     results[len].data_ = NULL;                                  \
     results[len].size_ = 0;                                     \
-    results[len].type_ = RT_Undefined;                          \
+    results[len].type_ = JS_ValueType::RT_Undefined;                          \
   }
 
 static int extension_id = 0;

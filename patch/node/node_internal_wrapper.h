@@ -494,7 +494,7 @@ class JSValueWrapper {
   }
 
 #define EMPTY_CHECK(x) \
-  if (value->type_ == RT_Null || value->type_ == RT_Undefined) return x
+  if (value->type_ == JS_ValueType::RT_Null || value->type_ == JS_ValueType::RT_Undefined) return x
 
 #define UNWRAP_RESULT(x) JSValueWrapper *wrap = (JSValueWrapper *)x
 
