@@ -339,7 +339,12 @@ var createRelease = function() {
                 + path.sep;
       dirs.types = [ '*.a' ];
     }
-  } else {
+  } else if (platform == 'windows-uwp') {
+      dirs.source = forced_target + path.sep
+                + (args.hasOwnProperty('--release') ? 'Release' : 'Debug');
+      dirs.types = [ '*.dll', '*.lib' ];
+  }
+  else {
     throw new Error("Unsupported platform: " + platform);
   }
 
