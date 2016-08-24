@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #ifndef JXCORE_WRAPPER
-enum class _JSBaseType {
+enum _JSBaseType {
   RT_Int32 = 1,
   RT_Double = 2,
   RT_Boolean = 3,
@@ -28,7 +28,7 @@ enum class _JSBaseType {
   RT_Error = 9,
   RT_Function = 10
 };
-typedef enum class _JSBaseType JS_ValueType;
+typedef enum _JSBaseType JS_ValueType;
 #else
 typedef enum _JXType _JSBaseType;
 typedef enum _JXType JS_ValueType;
