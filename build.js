@@ -8,13 +8,13 @@ function print_help(exit_code) {
   var params = [
     {option: "--help", text: "display available options"},
     {option: "", text: ""}, // placeholder
-    {option: "--cid_node=[commit-id]", text: "Checkout a particular commit from node/node-chakracore repo"},
+    {option: "--cid_node=[commit-id]", text: "Checkout a particular commit from the node repo"},
     {option: "--cid_jxcore=[commit-id]", text: "Checkout a particular commit from jxcore repo"},
     {option: "--url_node=[node repo url]", text: "URL for node.js Github repo"},
     {option: "--url_jxcore=[jx repo url]", text: "URL for jxcore Github repo"},
     {option: "--dest-cpu=[cpu_type]", text: "set target cpu (arm, ia32, x86, x64). i.e. --dest-cpu=ia32"},
     {option: "--ndk-path=[path]", text: "path to android ndk. This option is required for platform=android"},
-    {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-arm)"},
+    {option: "--platform=[target]", text: "set target platform. by default 'desktop'. (android, desktop, ios, windows-uwp)"},
     {option: "--force-target=[jxcore or nodejs]", text: "Force target framework regardless from the platform"},
     {option: "--release", text: "Build release binary. By default Debug"},
     {option: "--reset", text: "Clone nodejs and jxcore repos once again"},
@@ -44,7 +44,7 @@ function createScript() {
     if (args.hasOwnProperty('--dest-cpu')) {
       cpu = "--dest-cpu=" + args['--dest-cpu'];
     } else {
-      cpu = "--dest-cpu=ia32"
+      cpu = "--dest-cpu=x64"
     }
 
     if (platform == "ios" || platform == "android" || forced_target == 'jxcore') {
@@ -85,16 +85,14 @@ function createScript() {
             + ';make -j ' + require('os').cpus().length;
     }
   } else {
-    if (platform == "windows-arm") {
-      cpu = "arm";
-    } else if (args.hasOwnProperty('--dest-cpu')){
+    if (args.hasOwnProperty('--dest-cpu')){
       cpu = args['--dest-cpu'];
     } else {
-      cpu = 'ia32';
+      cpu = 'x64';
     }
 
-    if (platform == "windows-arm" && forced_target == 'jxcore') {
-      console.error("For Windows ARM, node-chakracore is the only supported option.");
+    if (platform == "windows-uwp" && forced_target == 'jxcore') {
+      console.error("JXCore does not have support for Windows UWP");
       exit(1);
     }
 
@@ -103,10 +101,17 @@ function createScript() {
       batch += 'cd jxcore\nvcbuild.bat --shared-library ' + cpu + ' ';
     else {
       forced_target = 'nodejs';
-      batch += 'cd nodejs\nvcbuild.bat chakracore nosign ' + cpu + ' ';
+      batch += 'cd nodejs\nvcbuild.bat nosign ' + cpu + ' ';
     }
 
-    batch += (release ? 'release ' : 'debug ') + '\n'
+    if (platform == "windows-uwp") {
+      batch += 'chakra uwp-dll '; // VCBuild flags for UWP target
+    } 
+
+    var releaseType = (release ? 'release' : 'debug');
+    var logFileName = 'buildlog_' + cpu + '.log';
+    console.log('Build log file : ' + logFileName);
+    batch += releaseType + ' > ' + logFileName + '\n'
           + 'set EXIT_CODE=%errorlevel%\n'
           + 'cd ..\n'
           + 'exit /b %EXIT_CODE%\n';
@@ -144,7 +149,7 @@ var createBatch = function() {
     fs.writeFileSync('./temp/clean.bat', 'cd $1;git checkout -f');
   }
 
-  var node_base = (setup.node_url.indexOf('node-chakracore') > 0 ? 'chakracore-master' : 'master');
+  var node_base = (setup.node_url.indexOf('ms-iot/node') > 0 ? 'chakra-uwp' : 'master');
   var br_node = args.hasOwnProperty('--cid_node') ? args['--cid_node'] : node_base;
   var br_jxcore = args.hasOwnProperty('--cid_jxcore') ? args['--cid_jxcore'] : "master";
   fs.writeFileSync('./temp/checkout_node.bat', taskman.checkout('nodejs', br_node));
@@ -170,7 +175,7 @@ var createBatch = function() {
 }
 
 var setup = function(set_url_only) {
-  setup.node_url = 'https://github.com/' + (isWindows ? 'nodejs/node-chakracore' : 'nodejs/node');
+  setup.node_url = 'https://github.com/' + (isWindows ? 'ms-iot/node' : 'nodejs/node');
   if (args.hasOwnProperty('--url_node')) {
     setup.node_url = args['--url_node'];
   }
@@ -334,7 +339,12 @@ var createRelease = function() {
                 + path.sep;
       dirs.types = [ '*.a' ];
     }
-  } else {
+  } else if (platform == 'windows-uwp') {
+      dirs.source = forced_target + path.sep
+                + (args.hasOwnProperty('--release') ? 'Release' : 'Debug');
+      dirs.types = [ '*.dll', '*.lib' ];
+  }
+  else {
     throw new Error("Unsupported platform: " + platform);
   }
 
