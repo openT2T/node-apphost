@@ -157,11 +157,12 @@ var createBatch = function() {
 
   if (!isWindows) {
     fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
-                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'ia32')
+                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'x64')
                                       + '\nexit $?');
   } else {
     fs.writeFileSync('./temp/test.bat', 'cd tests\nnode runtests.js --target=' + forced_target
-                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'ia32')
+                                      + ' --dest-cpu=' + (args.hasOwnProperty('--dest-cpu') ? args['--dest-cpu'] : 'x64')
+                                      + ' --mode=' + (args.hasOwnProperty('--release') ? args['--release'] : 'Debug')
                                       + '\nexit %errorlevel%');
   }
 
