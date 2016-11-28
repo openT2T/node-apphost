@@ -27,7 +27,7 @@ class ScopeWatch {
   bool EnteredNewScope() { return entered_; }
 
   void EnterScope() {
-#ifndef NODE_ENGINE_CHAKRACORE
+#if !defined(NODE_ENGINE_CHAKRACORE) && !defined(NODE_ENGINE_CHAKRA)
     if (!in_scope_faked_)
       isolate_->Enter();
 #endif
@@ -38,7 +38,7 @@ class ScopeWatch {
 
   ~ScopeWatch() {
     if (entered_) {
-#ifndef NODE_ENGINE_CHAKRACORE
+#if !defined(NODE_ENGINE_CHAKRACORE) && !defined(NODE_ENGINE_CHAKRA)
       if (!in_scope_faked_)
         isolate_->Exit();
 #endif
@@ -1164,7 +1164,7 @@ void JS_QuitLoop() {
 }
 
 bool JS_IsV8() {
-#ifndef NODE_ENGINE_CHAKRACORE
+#if !defined(NODE_ENGINE_CHAKRACORE) && !defined(NODE_ENGINE_CHAKRA)
   return true;
 #else
   return false;
@@ -1174,7 +1174,7 @@ bool JS_IsV8() {
 bool JS_IsSpiderMonkey() { return false; }
 
 bool JS_IsChakra() {
-#ifdef NODE_ENGINE_CHAKRACORE
+#if defined(NODE_ENGINE_CHAKRACORE) || defined(NODE_ENGINE_CHAKRA)
   return true;
 #else
   return false;
